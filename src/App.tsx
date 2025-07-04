@@ -25,9 +25,11 @@ function App() {
   const [showBookForm, setShowBookForm] = useState(false);
   const [editingBook, setEditingBook] = useState<BookType | null>(null);
 
+import { addBook, updateBook, fetchBooks } from './supabaseClient';
+
 useEffect(() => {
   const fetchInitialData = async () => {
-    const loadedBooks = await loadBooks();
+    const loadedBooks = await fetchBooks();
     setBooks(loadedBooks);
   };
 
