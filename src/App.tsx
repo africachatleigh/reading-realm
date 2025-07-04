@@ -60,19 +60,24 @@ useEffect(() => {
     saveBooks(updatedBooks);
   };
 
-  const handleEditBook = (bookData: Omit<BookType, 'overallRating'>) => {
-    const updatedBook: BookType = {
-      ...bookData,
-      overallRating: calculateOverallRating(bookData.ratings),
-    };
+  const handleEditBook = async (bookData: Omit<BookType, 'overallRating'>) => {
+  const updatedBook: BookType = {
+    ...bookData,
+    overallRating: calculateOverallRating(bookData.ratings),
+  };
 
-    const updatedBooks = books.map(book => 
+  try {
+    await updateBook(updatedBook);
+    const updatedBooks = books.map(book =>
       book.id === updatedBook.id ? updatedBook : book
     );
     setBooks(updatedBooks);
-    saveBooks(updatedBooks);
     setEditingBook(null);
-  };
+  } catch (error) {
+    console.error('Failed to update book:', error);
+  }
+};
+
 
   const handleAddGenre = (genreName: string) => {
     const newGenre: Genre = {
