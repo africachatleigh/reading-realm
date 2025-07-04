@@ -7,10 +7,27 @@ export interface ApiResponse<T> {
 }
 
 export const testConnection = async () => {
-  const response = await fetch('/.netlify/functions/hello');
-  const data = await response.json();
-  return data;
+  try {
+    const response = await fetch('/.netlify/functions/hello');
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+
+    const text = await response.text();
+
+    if (!text) {
+      throw new Error('Empty response from server');
+    }
+
+    const data = JSON.parse(text);
+    return data;
+  } catch (error) {
+    console.error('API connection error:', error);
+    throw error;
+  }
 };
+
 
 export const api = {
   // Test connection to hello function
@@ -40,7 +57,8 @@ export const api = {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      const data = await response.json();
+      const text = await response.text();
+const data = text ? JSON.parse(text) : [];
       return {
         success: true,
         data
