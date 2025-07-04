@@ -38,3 +38,15 @@ export async function updateBook(book: any) {
 
   return data;
 }
+
+export async function deleteBook(id: string) {
+  const { error } = await supabase
+    .from('books')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error deleting book:', error);
+    throw error;
+  }
+}
