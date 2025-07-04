@@ -19,7 +19,7 @@ const BookList: React.FC<BookListProps> = ({ books, genres, onEditBook, showFilt
   const [searchTerm, setSearchTerm] = useState('');
   const [genreFilter, setGenreFilter] = useState('');
   const [yearFilter, setYearFilter] = useState('');
-  const [ratingFilter, setRatingFilter] = useState('');
+  const [whichWitchFilter, setWhichWitchFilter] = useState('');
   const [sortField, setSortField] = useState<SortField>('date');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
@@ -29,25 +29,17 @@ const BookList: React.FC<BookListProps> = ({ books, genres, onEditBook, showFilt
     return years;
   }, [books]);
 
+  const whichWitchOptions = ['Lou Lou', 'Chlo', 'Affo'];
+
   const filteredAndSortedBooks = useMemo(() => {
     let filtered = books.filter(book => {
       const matchesSearch = book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            book.author.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesGenre = !genreFilter || (book.genres || []).includes(genreFilter);
       const matchesYear = !yearFilter || book.completionYear.toString() === yearFilter;
-      const matchesRating = !ratingFilter || (() => {
-        const starRating = convertToStarRating(book.overallRating);
-        switch (ratingFilter) {
-          case '5': return starRating >= 4.5;
-          case '4': return starRating >= 3.5 && starRating < 4.5;
-          case '3': return starRating >= 2.5 && starRating < 3.5;
-          case '2': return starRating >= 1.5 && starRating < 2.5;
-          case '1': return starRating < 1.5;
-          default: return true;
-        }
-      })();
+      const matchesWhichWitch = !whichWitchFilter || book.whichWitch === whichWitchFilter;
 
-      return matchesSearch && matchesGenre && matchesYear && matchesRating;
+      return matchesSearch && matchesGenre && matchesYear && matchesWhichWitch;
     });
 
     // Sort books
@@ -77,7 +69,7 @@ const BookList: React.FC<BookListProps> = ({ books, genres, onEditBook, showFilt
     });
 
     return filtered;
-  }, [books, searchTerm, genreFilter, yearFilter, ratingFilter, sortField, sortDirection]);
+  }, [books, searchTerm, genreFilter, yearFilter, whichWitchFilter, sortField, sortDirection]);
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -151,8 +143,8 @@ const BookList: React.FC<BookListProps> = ({ books, genres, onEditBook, showFilt
             </select>
 
             <select
-              value={ratingFilter}
-              onChange={(e) => setRatingFilter(e.target.value)}
+              value={whichWitchFilter}
+              onChange={(e) => setWhichWitchFilter(e.target.value)}
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent text-sm"
               style={{ 
                 '--tw-ring-color': '#77a361',
@@ -161,12 +153,10 @@ const BookList: React.FC<BookListProps> = ({ books, genres, onEditBook, showFilt
               onFocus={(e) => e.target.style.borderColor = '#77a361'}
               onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
             >
-              <option value="">All Ratings</option>
-              <option value="5">5 Stars</option>
-              <option value="4">4 Stars</option>
-              <option value="3">3 Stars</option>
-              <option value="2">2 Stars</option>
-              <option value="1">1 Star</option>
+              <option value="">All Witches</option>
+              {whichWitchOptions.map(witch => (
+                <option key={witch} value={witch}>{witch}</option>
+              ))}
             </select>
 
             <select
@@ -283,6 +273,9 @@ const BookList: React.FC<BookListProps> = ({ books, genres, onEditBook, showFilt
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                     Type
                   </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    Which Witch
+                  </th>
                   <th 
                     className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider cursor-pointer hover:text-gray-900"
                     onClick={() => handleSort('date')}
@@ -370,6 +363,18 @@ const BookList: React.FC<BookListProps> = ({ books, genres, onEditBook, showFilt
                         >
                           {book.seriesName || 'Series'}
                         </span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {book.whichWitch ? (
+                        <span 
+                          className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full text-white"
+                          style={{ backgroundColor: '#77a361' }}
+                        >
+                          {book.whichWitch}
+                        </span>
+                      ) : (
+                        <span className="text-gray-400 text-xs">-</span>
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">

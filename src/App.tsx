@@ -14,7 +14,6 @@ import {
 } from './utils/storage';
 import BookForm from './components/BookForm';
 import BookList from './components/BookList';
-import ConnectionStatus from './components/ConnectionStatus';
 import { convertToStarRating } from './utils/storage';
 
 function App() {
@@ -24,7 +23,6 @@ function App() {
   const [authors, setAuthors] = useState<Author[]>([]);
   const [showBookForm, setShowBookForm] = useState(false);
   const [editingBook, setEditingBook] = useState<BookType | null>(null);
-  const [isBackendConnected, setIsBackendConnected] = useState(false);
 
   useEffect(() => {
     setBooks(loadBooks());
@@ -123,7 +121,6 @@ function App() {
             </div>
             
             <div className="flex items-center space-x-4">
-              <ConnectionStatus onConnectionChange={setIsBackendConnected} />
               <button
                 onClick={() => setShowBookForm(true)}
                 className="flex items-center space-x-2 text-white px-6 py-3 rounded-lg transition-colors shadow-md hover:shadow-lg"
