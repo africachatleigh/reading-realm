@@ -78,17 +78,6 @@ useEffect(() => {
   }
 };
 
-const handleDeleteBook = async (id: string) => {
-  try {
-    await deleteBook(id);
-    const updatedBooks = books.filter(book => book.id !== id);
-    setBooks(updatedBooks);
-  } catch (error) {
-    console.error('Failed to delete book:', error);
-  }
-};
-
-
   const handleAddGenre = (genreName: string) => {
     const newGenre: Genre = {
       id: Date.now().toString(),
@@ -206,7 +195,6 @@ const handleDeleteBook = async (id: string) => {
               books={books} 
               genres={genres} 
               onEditBook={setEditingBook}
-              onDelete={handleDeleteBook}
               showFiltersOnly={true}
             />
           </div>
