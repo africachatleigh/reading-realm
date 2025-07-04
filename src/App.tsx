@@ -31,13 +31,23 @@ function App() {
     setAuthors(loadAuthors());
   }, []);
 
-  const handleAddBook = (bookData: Omit<BookType, 'id' | 'overallRating' | 'dateAdded'>) => {
-    const newBook: BookType = {
-      ...bookData,
-      id: Date.now().toString(),
-      overallRating: calculateOverallRating(bookData.ratings),
-      dateAdded: new Date().toISOString(),
-    };
+  const handleAddBook = async (bookData: Omit<BookType, 'id' | 'overallRating' | 'dateAdded'>) => {
+  const newBook: BookType = {
+    ...bookData,
+    id: Date.now().toString(),
+    overallRating: calculateOverallRating(bookData.ratings),
+    dateAdded: new Date().toISOString(),
+  };
+
+  setBooks(prev => [newBook, ...prev]); // Optimistic UI update
+
+  try {
+    await saveBook(newBook); // Save to Supabase
+  } catch (error) {
+    console.error('Failed to save book to Supabase:', error);
+  }
+};
+
 
     const updatedBooks = [...books, newBook];
     setBooks(updatedBooks);
