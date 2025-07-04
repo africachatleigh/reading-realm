@@ -10,7 +10,8 @@ export interface ApiResponse<T> {
 
 export const testConnection = async () => {
   try {
-    const response = await fetch('/.netlify/functions/hello');
+    const response = await fetch(`${NETLIFY_BASE_URL}/.netlify/functions/hello`);
+
 
     if (!response.ok) {
       throw new Error(`API error: ${response.status}`);
