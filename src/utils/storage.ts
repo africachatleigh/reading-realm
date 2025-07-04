@@ -26,19 +26,32 @@ export const defaultAuthors: Author[] = [
   { id: '5', name: 'J.K. Rowling' },
 ];
 
-export const loadBooks = (): Book[] => {
+import { fetchBooks, addBook } from './supabaseClient'; // adjust path as needed
+
+// BOOKS with Supabase (async)
+export const loadBooks = async (): Promise<Book[]> => {
   try {
-    const stored = localStorage.getItem(BOOKS_KEY);
-    return stored ? JSON.parse(stored) : [];
-  } catch {
+    const books = await fetchBooks();
+    return books || [];
+  } catch (error) {
+    console.error('Failed to load books:', error);
     return [];
   }
 };
 
-export const saveBooks = (books: Book[]): void => {
-  localStorage.setItem(BOOKS_KEY, JSON.stringify(books));
+// This will add each book individually to Supabase
+export const saveBooks = async (books: Book[]): Promise<void> => {
+  try {
+    for (const book of books) {
+      await addBook(book);
+    }
+  } catch (error) {
+    console.error('Failed to save books:', error);
+    throw error;
+  }
 };
 
+// GENRES (still localStorage)
 export const loadGenres = (): Genre[] => {
   try {
     const stored = localStorage.getItem(GENRES_KEY);
@@ -52,6 +65,7 @@ export const saveGenres = (genres: Genre[]): void => {
   localStorage.setItem(GENRES_KEY, JSON.stringify(genres));
 };
 
+// SERIES (still localStorage)
 export const loadSeries = (): Series[] => {
   try {
     const stored = localStorage.getItem(SERIES_KEY);
@@ -65,6 +79,7 @@ export const saveSeries = (series: Series[]): void => {
   localStorage.setItem(SERIES_KEY, JSON.stringify(series));
 };
 
+// AUTHORS (still localStorage)
 export const loadAuthors = (): Author[] => {
   try {
     const stored = localStorage.getItem(AUTHORS_KEY);
@@ -77,6 +92,7 @@ export const loadAuthors = (): Author[] => {
 export const saveAuthors = (authors: Author[]): void => {
   localStorage.setItem(AUTHORS_KEY, JSON.stringify(authors));
 };
+
 
 export const calculateOverallRating = (ratings: Book['ratings']): number => {
   const total = ratings.characters + ratings.worldBuilding + ratings.plot + 
