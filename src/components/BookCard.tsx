@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, User, Tag, Edit, BookOpen, Users } from 'lucide-react';
+import { Calendar, User, Tag, Edit, BookOpen, Users, Sparkles } from 'lucide-react';
 import { Book } from '../types/Book';
 import { convertToStarRating } from '../utils/storage';
 import StarRating from './StarRating';
@@ -100,6 +100,16 @@ const BookCard: React.FC<BookCardProps> = ({ book, onEdit }) => {
                   </>
                 )}
               </div>
+
+              {/* Which Witch Information */}
+              {book.whichWitch && (
+                <div className="flex items-center space-x-1">
+                  <Sparkles className="w-3 h-3 text-purple-500 flex-shrink-0" />
+                  <span className="text-xs text-purple-600 bg-purple-50 px-2 py-1 rounded-full">
+                    {book.whichWitch}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
 

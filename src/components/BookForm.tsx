@@ -37,6 +37,7 @@ const BookForm: React.FC<BookFormProps> = ({
     coverImage: '',
     isStandalone: true,
     seriesName: '',
+    whichWitch: '', // New field for Which Witch selection
   });
 
   const [ratings, setRatings] = useState({
@@ -54,6 +55,9 @@ const BookForm: React.FC<BookFormProps> = ({
   const [newAuthor, setNewAuthor] = useState('');
   const [showAddAuthor, setShowAddAuthor] = useState(false);
 
+  // Which Witch options
+  const whichWitchOptions = ['Lou Lou', 'Chlo', 'Affo'];
+
   // Populate form when editing
   useEffect(() => {
     if (book) {
@@ -66,6 +70,7 @@ const BookForm: React.FC<BookFormProps> = ({
         coverImage: book.coverImage || '',
         isStandalone: book.isStandalone,
         seriesName: book.seriesName || '',
+        whichWitch: book.whichWitch || '',
       });
       setRatings(book.ratings);
     }
@@ -317,6 +322,27 @@ const BookForm: React.FC<BookFormProps> = ({
                 )}
               </div>
             </div>
+          </div>
+
+          {/* Which Witch Selection */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Which Witch</label>
+            <select
+              value={formData.whichWitch}
+              onChange={(e) => setFormData(prev => ({ ...prev, whichWitch: e.target.value }))}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+              style={{ 
+                '--tw-ring-color': '#77a361',
+                focusRingColor: '#77a361'
+              }}
+              onFocus={(e) => e.target.style.borderColor = '#77a361'}
+              onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
+            >
+              <option value="">Select a witch</option>
+              {whichWitchOptions.map(witch => (
+                <option key={witch} value={witch}>{witch}</option>
+              ))}
+            </select>
           </div>
 
           {/* Completion Date */}

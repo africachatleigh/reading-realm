@@ -17,6 +17,7 @@ export interface Book {
   dateAdded: string;
   isStandalone: boolean;
   seriesName?: string;
+  whichWitch?: string; // New field for Which Witch selection
 }
 
 export interface Genre {
