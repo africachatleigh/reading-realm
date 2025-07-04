@@ -1,4 +1,4 @@
-import { Book, Genre, Series, Author } from '../types/Book';
+//import { Book, Genre, Series, Author } from '../types/Book';
 
 const BOOKS_KEY = 'bookTracker_books';
 const GENRES_KEY = 'bookTracker_genres';
@@ -26,8 +26,8 @@ export const defaultAuthors: Author[] = [
   { id: '5', name: 'J.K. Rowling' },
 ];
 
-import { fetchBooks, addBook } from '../supabaseClient'; // adjust path as needed
-import { Book } from './types/Book'; // adjust path if needed
+//import { fetchBooks, addBook } from './supabaseclient'; // adjust path as needed
+//import { Book } from './types/Book'; // adjust path if needed
 
 export const loadBooks = async (): Promise<Book[]> => {
   try {
