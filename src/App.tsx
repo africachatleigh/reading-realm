@@ -14,6 +14,7 @@ import {
 } from './utils/storage';
 import BookForm from './components/BookForm';
 import BookList from './components/BookList';
+import ConnectionStatus from './components/ConnectionStatus';
 import { convertToStarRating } from './utils/storage';
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
   const [authors, setAuthors] = useState<Author[]>([]);
   const [showBookForm, setShowBookForm] = useState(false);
   const [editingBook, setEditingBook] = useState<BookType | null>(null);
+  const [isBackendConnected, setIsBackendConnected] = useState(false);
 
   useEffect(() => {
     setBooks(loadBooks());
@@ -119,24 +121,40 @@ function App() {
                 <h1 className="text-3xl font-bold text-gray-900">Chaskit Books</h1>
               </div>
             </div>
-            <button
-              onClick={() => setShowBookForm(true)}
-              className="flex items-center space-x-2 text-white px-6 py-3 rounded-lg transition-colors shadow-md hover:shadow-lg"
-              style={{ 
-                backgroundColor: '#77a361',
-                ':hover': { backgroundColor: '#5d8a47' }
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#5d8a47'}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#77a361'}
-            >
-              <Plus className="w-5 h-5" />
-              <span>Add Book</span>
-            </button>
+            
+            <div className="flex items-center space-x-4">
+              <ConnectionStatus onConnectionChange={setIsBackendConnected} />
+              <button
+                onClick={() => setShowBookForm(true)}
+                className="flex items-center space-x-2 text-white px-6 py-3 rounded-lg transition-colors shadow-md hover:shadow-lg"
+                style={{ 
+                  backgroundColor: '#77a361',
+                  ':hover': { backgroundColor: '#5d8a47' }
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#5d8a47'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#77a361'}
+              >
+                <Plus className="w-5 h-5" />
+                <span>Add Book</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Backend Connection Notice */}
+        {isBackendConnected && (
+          <div className="mb-6 p-4 rounded-lg" style={{ backgroundColor: '#d0dfc8' }}>
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#77a361' }}></div>
+              <span className="text-sm font-medium" style={{ color: '#77a361' }}>
+                Successfully connected to backend function
+              </span>
+            </div>
+          </div>
+        )}
+
         {/* Stats and Filters Layout */}
         <div className="flex flex-col lg:flex-row gap-6 mb-8">
           {/* Stats Column */}
