@@ -1,3 +1,4 @@
+import { addBook, updateBook } from './supabaseClient';
 import React, { useState, useEffect } from 'react';
 import { Plus, BarChart3, BookOpen } from 'lucide-react';
 import { Book as BookType, Genre, Series, Author } from './types/Book';
@@ -35,9 +36,8 @@ useEffect(() => {
   setSeries(loadSeries());
   setAuthors(loadAuthors());
 }, []);
-
-
-  const handleAddBook = async (bookData: Omit<BookType, 'id' | 'overallRating' | 'dateAdded'>) => {
+  
+const handleAddBook = async (bookData: Omit<BookType, 'id' | 'overallRating' | 'dateAdded'>) => {
   const newBook: BookType = {
     ...bookData,
     id: Date.now().toString(),
@@ -48,7 +48,7 @@ useEffect(() => {
   setBooks(prev => [newBook, ...prev]); // Optimistic UI update
 
   try {
-    await saveBook(newBook); // Save to Supabase
+    await addBook(newBook); // <-- Use addBook from supabaseClient.ts
   } catch (error) {
     console.error('Failed to save book to Supabase:', error);
   }
