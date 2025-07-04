@@ -143,18 +143,6 @@ function App() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Backend Connection Notice */}
-        {isBackendConnected && (
-          <div className="mb-6 p-4 rounded-lg" style={{ backgroundColor: '#d0dfc8' }}>
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#77a361' }}></div>
-              <span className="text-sm font-medium" style={{ color: '#77a361' }}>
-                Successfully connected to backend function
-              </span>
-            </div>
-          </div>
-        )}
-
         {/* Stats and Filters Layout */}
         <div className="flex flex-col lg:flex-row gap-6 mb-8">
           {/* Stats Column */}
