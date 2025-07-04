@@ -26,9 +26,9 @@ export const defaultAuthors: Author[] = [
   { id: '5', name: 'J.K. Rowling' },
 ];
 
-import { fetchBooks, addBook } from './supabaseClient'; // adjust path as needed
+import { fetchBooks, addBook } from './supabaseclient'; // adjust path as needed
+import { Book } from './types/Book'; // adjust path if needed
 
-// BOOKS with Supabase (async)
 export const loadBooks = async (): Promise<Book[]> => {
   try {
     const books = await fetchBooks();
@@ -39,15 +39,11 @@ export const loadBooks = async (): Promise<Book[]> => {
   }
 };
 
-// This will add each book individually to Supabase
-export const saveBooks = async (books: Book[]): Promise<void> => {
+export const saveBook = async (book: Book): Promise<void> => {
   try {
-    for (const book of books) {
-      await addBook(book);
-    }
+    await addBook(book);
   } catch (error) {
-    console.error('Failed to save books:', error);
-    throw error;
+    console.error('Failed to save book:', error);
   }
 };
 
