@@ -9,7 +9,6 @@ interface BookListProps {
   books: Book[];
   genres: Genre[];
   onEditBook: (book: Book) => void;
-  onDelete: (id: string) => void;
   showFiltersOnly?: boolean;
 }
 
