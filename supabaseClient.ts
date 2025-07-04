@@ -24,3 +24,17 @@ export async function addBook(book: Book): Promise<void> {
     throw error;
   }
 }
+
+export async function updateBook(book: any) {
+  const { data, error } = await supabase
+    .from('books')
+    .update(book)
+    .eq('id', book.id);
+
+  if (error) {
+    console.error('Error updating book:', error);
+    throw error;
+  }
+
+  return data;
+}
