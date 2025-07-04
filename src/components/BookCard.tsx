@@ -93,7 +93,7 @@ const BookCard: React.FC<BookCardProps> = ({ book, onEdit }) => {
                   </>
                 ) : (
                   <>
-                    <Users className="w-3 h-3 flex-shrink-0" style={{ color: '#77a361' }} />
+                    <Sparkles className="w-3 h-3 flex-shrink-0" style={{ color: '#77a361' }} />
                     <span className="text-xs text-white px-2 py-1 rounded-full truncate" style={{ backgroundColor: '#77a361' }}>
                       {book.seriesName || 'Series'}
                     </span>
@@ -104,8 +104,8 @@ const BookCard: React.FC<BookCardProps> = ({ book, onEdit }) => {
               {/* Which Witch Information */}
               {book.whichWitch && (
                 <div className="flex items-center space-x-1">
-                  <Sparkles className="w-3 h-3 text-purple-500 flex-shrink-0" />
-                  <span className="text-xs text-purple-600 bg-purple-50 px-2 py-1 rounded-full">
+                  <Users className="w-3 h-3 flex-shrink-0" style={{ color: '#77a361' }} />
+                  <span className="text-xs text-white px-2 py-1 rounded-full" style={{ backgroundColor: '#77a361' }}>
                     {book.whichWitch}
                   </span>
                 </div>
