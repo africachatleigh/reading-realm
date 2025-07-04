@@ -1,4 +1,4 @@
-const NETLIFY_BASE_URL = 'https://chaskitbooks.netlify.app';
+const NETLIFY_BASE_URL = 'https://reading-realm.netlify.app';
 
 // API service for connecting to backend functions
 
