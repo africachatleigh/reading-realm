@@ -24,12 +24,18 @@ function App() {
   const [showBookForm, setShowBookForm] = useState(false);
   const [editingBook, setEditingBook] = useState<BookType | null>(null);
 
-  useEffect(() => {
-    setBooks(loadBooks());
-    setGenres(loadGenres());
-    setSeries(loadSeries());
-    setAuthors(loadAuthors());
-  }, []);
+useEffect(() => {
+  const fetchInitialData = async () => {
+    const loadedBooks = await loadBooks();
+    setBooks(loadedBooks);
+  };
+
+  fetchInitialData();
+  setGenres(loadGenres());
+  setSeries(loadSeries());
+  setAuthors(loadAuthors());
+}, []);
+
 
   const handleAddBook = async (bookData: Omit<BookType, 'id' | 'overallRating' | 'dateAdded'>) => {
   const newBook: BookType = {
