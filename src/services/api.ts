@@ -1,3 +1,5 @@
+const NETLIFY_BASE_URL = 'https://chaskitbooks.netlify.app';
+
 // API service for connecting to backend functions
 
 export interface ApiResponse<T> {
@@ -51,7 +53,8 @@ export const api = {
   async getBooks(): Promise<ApiResponse<any[]>> {
     try {
       // This would connect to a books endpoint when available
-      const response = await fetch('/.netlify/functions/books');
+      const response = await fetch(`${NETLIFY_BASE_URL}/.netlify/functions/books`);
+
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -74,13 +77,14 @@ const data = text ? JSON.parse(text) : [];
 
   async saveBook(book: any): Promise<ApiResponse<any>> {
     try {
-      const response = await fetch('/.netlify/functions/books', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(book)
-      });
+      const response = await fetch(`${NETLIFY_BASE_URL}/.netlify/functions/books`, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify(book),
+});
+
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
