@@ -7,7 +7,7 @@ export interface ApiResponse<T> {
 }
 
 export const testConnection = async () => {
-  const response = await fetch('https://chaskitbooks.netlify.app/.netlify/functions/hello');
+  const response = await fetch('/.netlify/functions/hello');
   const data = await response.json();
   return data;
 };
@@ -34,7 +34,7 @@ export const api = {
   async getBooks(): Promise<ApiResponse<any[]>> {
     try {
       // This would connect to a books endpoint when available
-      const response = await fetch('https://chaskitbooks.netlify.app/.netlify/functions/books');
+      const response = await fetch('/.netlify/functions/books');
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -56,7 +56,7 @@ export const api = {
 
   async saveBook(book: any): Promise<ApiResponse<any>> {
     try {
-      const response = await fetch('https://chaskitbooks.netlify.app/.netlify/functions/books', {
+      const response = await fetch('/.netlify/functions/books', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
