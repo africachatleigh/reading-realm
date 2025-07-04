@@ -54,12 +54,6 @@ useEffect(() => {
   }
 };
 
-
-    const updatedBooks = [...books, newBook];
-    setBooks(updatedBooks);
-    saveBooks(updatedBooks);
-  };
-
   const handleEditBook = async (bookData: Omit<BookType, 'overallRating'>) => {
   const updatedBook: BookType = {
     ...bookData,
