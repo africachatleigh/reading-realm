@@ -1,4 +1,4 @@
-import { addBook, updateBook } from './supabaseClient';
+import { addBook, updateBook, fetchBooks } from './supabaseClient';
 import React, { useState, useEffect } from 'react';
 import { Plus, BarChart3, BookOpen } from 'lucide-react';
 import { Book as BookType, Genre, Series, Author } from './types/Book';
@@ -24,8 +24,6 @@ function App() {
   const [authors, setAuthors] = useState<Author[]>([]);
   const [showBookForm, setShowBookForm] = useState(false);
   const [editingBook, setEditingBook] = useState<BookType | null>(null);
-
-import { addBook, updateBook, fetchBooks } from './supabaseClient';
 
 useEffect(() => {
   const fetchInitialData = async () => {
