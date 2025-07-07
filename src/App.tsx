@@ -1,6 +1,6 @@
-import { addBook, updateBook, fetchBooks } from './supabaseClient';
+import { addBook, updateBook, fetchBooks, testConnection } from './supabaseClient';
 import React, { useState, useEffect } from 'react';
-import { Plus, BarChart3, BookOpen } from 'lucide-react';
+import { Plus, BarChart3, BookOpen, AlertCircle } from 'lucide-react';
 import { Book as BookType, Genre, Series, Author } from './types/Book';
 import { 
   loadGenres, 
@@ -23,29 +23,47 @@ function App() {
   const [showBookForm, setShowBookForm] = useState(false);
   const [editingBook, setEditingBook] = useState<BookType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [supabaseConnected, setSupabaseConnected] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const fetchInitialData = async () => {
+    const initializeApp = async () => {
       try {
         setIsLoading(true);
-        const loadedBooks = await fetchBooks();
-        setBooks(loadedBooks);
+        
+        // Test Supabase connection first
+        const isConnected = await testConnection();
+        setSupabaseConnected(isConnected);
+        
+        if (isConnected) {
+          // If connected, fetch books from Supabase
+          const loadedBooks = await fetchBooks();
+          setBooks(loadedBooks);
+        } else {
+          // If not connected, start with empty array
+          console.warn('Supabase not connected, starting with empty book list');
+          setBooks([]);
+        }
       } catch (error) {
-        console.error('Failed to fetch books:', error);
-        // Fallback to empty array if Supabase fails
+        console.error('Failed to initialize app:', error);
+        setSupabaseConnected(false);
         setBooks([]);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchInitialData();
+    initializeApp();
     setGenres(loadGenres());
     setSeries(loadSeries());
     setAuthors(loadAuthors());
   }, []);
   
   const handleAddBook = async (bookData: Omit<BookType, 'id' | 'overallRating' | 'dateAdded'>) => {
+    if (!supabaseConnected) {
+      alert('Please connect Supabase first by clicking the "Connect to Supabase" button in the top right.');
+      return;
+    }
+
     const newBook: BookType = {
       ...bookData,
       id: Date.now().toString(),
@@ -63,11 +81,16 @@ function App() {
       console.error('Failed to save book to Supabase:', error);
       // Revert optimistic update on error
       setBooks(prev => prev.filter(book => book.id !== newBook.id));
-      alert('Failed to save book. Please try again.');
+      alert('Failed to save book. Please check your Supabase connection and try again.');
     }
   };
 
   const handleEditBook = async (bookData: Omit<BookType, 'overallRating'>) => {
+    if (!supabaseConnected) {
+      alert('Please connect Supabase first by clicking the "Connect to Supabase" button in the top right.');
+      return;
+    }
+
     const updatedBook: BookType = {
       ...bookData,
       overallRating: calculateOverallRating(bookData.ratings),
@@ -87,7 +110,7 @@ function App() {
       console.error('Failed to update book:', error);
       // Revert optimistic update on error
       setBooks(originalBooks);
-      alert('Failed to update book. Please try again.');
+      alert('Failed to update book. Please check your Supabase connection and try again.');
     }
   };
 
@@ -168,6 +191,16 @@ function App() {
             </div>
             
             <div className="flex items-center space-x-4">
+              {/* Supabase Connection Status */}
+              {supabaseConnected === false && (
+                <div className="flex items-center space-x-2 px-3 py-2 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <AlertCircle className="w-4 h-4 text-yellow-600" />
+                  <span className="text-sm text-yellow-700">
+                    Connect Supabase to save books
+                  </span>
+                </div>
+              )}
+              
               <button
                 onClick={() => setShowBookForm(true)}
                 className="flex items-center space-x-2 text-white px-6 py-3 rounded-lg transition-colors shadow-md hover:shadow-lg"

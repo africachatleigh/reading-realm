@@ -1,14 +1,24 @@
 import { createClient } from '@supabase/supabase-js';
 import { Book } from './types/Book';
 
-const SUPABASE_URL = 'https://armqjcqhlysyaujoeyss.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFybXFqY3FobHlzeWF1am9leXNzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE2MzUwMTAsImV4cCI6MjA2NzIxMTAxMH0.FuQnP6m5IqrI3CDprU_BcofI3LVM9fIzBeJ8nqPk6X4';
+// These environment variables will be automatically set when you connect Supabase in Bolt.new
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error('Missing Supabase environment variables. Please connect Supabase in Bolt.new');
+}
+
+export const supabase = createClient(supabaseUrl || '', supabaseAnonKey || '');
 
 // Test the connection
 export async function testConnection(): Promise<boolean> {
   try {
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.error('Supabase not configured. Please connect Supabase in Bolt.new');
+      return false;
+    }
+    
     const { data, error } = await supabase.from('books').select('count', { count: 'exact', head: true });
     if (error) {
       console.error('Supabase connection test failed:', error);
@@ -25,6 +35,11 @@ export async function testConnection(): Promise<boolean> {
 // Fetch all books from Supabase
 export async function fetchBooks(): Promise<Book[]> {
   try {
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.warn('Supabase not configured, returning empty array');
+      return [];
+    }
+
     console.log('Fetching books from Supabase...');
     const { data, error } = await supabase
       .from('books')
@@ -47,6 +62,10 @@ export async function fetchBooks(): Promise<Book[]> {
 // Add a new book to Supabase
 export async function addBook(book: Book): Promise<void> {
   try {
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('Supabase not configured. Please connect Supabase in Bolt.new');
+    }
+
     console.log('Adding book to Supabase:', book.title);
     
     // Ensure all required fields are present and properly formatted
@@ -90,6 +109,10 @@ export async function addBook(book: Book): Promise<void> {
 // Update an existing book in Supabase
 export async function updateBook(book: Book): Promise<void> {
   try {
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('Supabase not configured. Please connect Supabase in Bolt.new');
+    }
+
     console.log('Updating book in Supabase:', book.title);
     
     // Ensure all fields are properly formatted for update
@@ -128,6 +151,10 @@ export async function updateBook(book: Book): Promise<void> {
 // Delete a book from Supabase
 export async function deleteBook(id: string): Promise<void> {
   try {
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('Supabase not configured. Please connect Supabase in Bolt.new');
+    }
+
     console.log('Deleting book from Supabase:', id);
     const { error } = await supabase
       .from('books')
