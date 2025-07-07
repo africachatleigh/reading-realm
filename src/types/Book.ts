@@ -14,7 +14,7 @@ export interface Book {
     enjoyment: number;
   };
   overallRating: number;
-  dateAdded: string;
+  dateadded: string; // Changed from dateAdded to match database column
   isStandalone: boolean;
   seriesName?: string;
   whichWitch?: string; // New field for Which Witch selection

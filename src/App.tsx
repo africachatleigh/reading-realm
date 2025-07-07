@@ -58,7 +58,7 @@ function App() {
     setAuthors(loadAuthors());
   }, []);
   
-  const handleAddBook = async (bookData: Omit<BookType, 'id' | 'overallRating' | 'dateAdded'>) => {
+  const handleAddBook = async (bookData: Omit<BookType, 'id' | 'overallRating' | 'dateadded'>) => {
     if (!supabaseConnected) {
       alert('Please connect Supabase first by clicking the "Connect to Supabase" button in the top right.');
       return;
@@ -68,7 +68,7 @@ function App() {
       ...bookData,
       id: Date.now().toString(),
       overallRating: calculateOverallRating(bookData.ratings),
-      dateAdded: new Date().toISOString(),
+      dateadded: new Date().toISOString(),
     };
 
     // Optimistic UI update

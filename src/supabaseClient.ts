@@ -44,7 +44,7 @@ export async function fetchBooks(): Promise<Book[]> {
     const { data, error } = await supabase
       .from('books')
       .select('*')
-      .order('dateAdded', { ascending: false });
+      .order('dateadded', { ascending: false });
     
     if (error) {
       console.error('Error fetching books:', error);
@@ -73,16 +73,16 @@ export async function addBook(book: Book): Promise<void> {
       id: book.id,
       title: book.title,
       author: book.author,
-      completionMonth: book.completionMonth,
-      completionYear: book.completionYear,
+      completionmonth: book.completionMonth,
+      completionyear: book.completionYear,
       genres: book.genres || [],
-      coverImage: book.coverImage || null,
+      coverimage: book.coverImage || null,
       ratings: book.ratings,
-      overallRating: book.overallRating,
-      dateAdded: book.dateAdded,
-      isStandalone: book.isStandalone,
-      seriesName: book.seriesName || null,
-      whichWitch: book.whichWitch
+      overallrating: book.overallRating,
+      dateadded: book.dateadded,
+      isstandalone: book.isStandalone,
+      seriesname: book.seriesName || null,
+      whichwitch: book.whichWitch
     };
 
     console.log('Book data being inserted:', bookToInsert);
@@ -119,16 +119,16 @@ export async function updateBook(book: Book): Promise<void> {
     const bookToUpdate = {
       title: book.title,
       author: book.author,
-      completionMonth: book.completionMonth,
-      completionYear: book.completionYear,
+      completionmonth: book.completionMonth,
+      completionyear: book.completionYear,
       genres: book.genres || [],
-      coverImage: book.coverImage || null,
+      coverimage: book.coverImage || null,
       ratings: book.ratings,
-      overallRating: book.overallRating,
-      dateAdded: book.dateAdded,
-      isStandalone: book.isStandalone,
-      seriesName: book.seriesName || null,
-      whichWitch: book.whichWitch
+      overallrating: book.overallRating,
+      dateadded: book.dateadded,
+      isstandalone: book.isStandalone,
+      seriesname: book.seriesName || null,
+      whichwitch: book.whichWitch
     };
 
     const { error } = await supabase
