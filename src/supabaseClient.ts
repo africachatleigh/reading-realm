@@ -1,9 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
 import { Book } from './types/Book';
 
-// These environment variables will be automatically set when you connect Supabase in Bolt.new
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// For demo deployment - replace these with your actual Supabase credentials
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://xdgydkxomngznukecszh.supabase.co';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkZ3lka3hvbW5nem51a2Vjc3poIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzYyNTU5NzEsImV4cCI6MjA1MTgzMTk3MX0.my_VGOJCqhlysyaujoeyss-2C22dateAdded22:1';
 
 if (!supabaseUrl || !supabaseAnonKey) {
   console.error('Missing Supabase environment variables. Please connect Supabase in Bolt.new');
