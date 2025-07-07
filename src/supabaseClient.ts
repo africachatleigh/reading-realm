@@ -48,12 +48,35 @@ export async function fetchBooks(): Promise<Book[]> {
 export async function addBook(book: Book): Promise<void> {
   try {
     console.log('Adding book to Supabase:', book.title);
+    
+    // Ensure all required fields are present and properly formatted
+    const bookToInsert = {
+      id: book.id,
+      title: book.title,
+      author: book.author,
+      completionMonth: book.completionMonth,
+      completionYear: book.completionYear,
+      genres: book.genres || [],
+      coverImage: book.coverImage || null,
+      ratings: book.ratings,
+      overallRating: book.overallRating,
+      dateAdded: book.dateAdded,
+      isStandalone: book.isStandalone,
+      seriesName: book.seriesName || null,
+      whichWitch: book.whichWitch
+    };
+
+    console.log('Book data being inserted:', bookToInsert);
+    
     const { error } = await supabase
       .from('books')
-      .insert([book]);
+      .insert([bookToInsert]);
     
     if (error) {
       console.error('Error adding book:', error);
+      console.error('Error details:', error.details);
+      console.error('Error hint:', error.hint);
+      console.error('Error message:', error.message);
       throw error;
     }
     
@@ -68,9 +91,26 @@ export async function addBook(book: Book): Promise<void> {
 export async function updateBook(book: Book): Promise<void> {
   try {
     console.log('Updating book in Supabase:', book.title);
+    
+    // Ensure all fields are properly formatted for update
+    const bookToUpdate = {
+      title: book.title,
+      author: book.author,
+      completionMonth: book.completionMonth,
+      completionYear: book.completionYear,
+      genres: book.genres || [],
+      coverImage: book.coverImage || null,
+      ratings: book.ratings,
+      overallRating: book.overallRating,
+      dateAdded: book.dateAdded,
+      isStandalone: book.isStandalone,
+      seriesName: book.seriesName || null,
+      whichWitch: book.whichWitch
+    };
+
     const { error } = await supabase
       .from('books')
-      .update(book)
+      .update(bookToUpdate)
       .eq('id', book.id);
 
     if (error) {
