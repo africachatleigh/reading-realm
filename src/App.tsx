@@ -3,8 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { Plus, BarChart3, BookOpen } from 'lucide-react';
 import { Book as BookType, Genre, Series, Author } from './types/Book';
 import { 
-  loadBooks, 
-  saveBooks, 
   loadGenres, 
   saveGenres, 
   loadSeries, 
@@ -24,53 +22,74 @@ function App() {
   const [authors, setAuthors] = useState<Author[]>([]);
   const [showBookForm, setShowBookForm] = useState(false);
   const [editingBook, setEditingBook] = useState<BookType | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-useEffect(() => {
-  const fetchInitialData = async () => {
-    const loadedBooks = await fetchBooks();
-    setBooks(loadedBooks);
-  };
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      try {
+        setIsLoading(true);
+        const loadedBooks = await fetchBooks();
+        setBooks(loadedBooks);
+      } catch (error) {
+        console.error('Failed to fetch books:', error);
+        // Fallback to empty array if Supabase fails
+        setBooks([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  fetchInitialData();
-  setGenres(loadGenres());
-  setSeries(loadSeries());
-  setAuthors(loadAuthors());
-}, []);
+    fetchInitialData();
+    setGenres(loadGenres());
+    setSeries(loadSeries());
+    setAuthors(loadAuthors());
+  }, []);
   
-const handleAddBook = async (bookData: Omit<BookType, 'id' | 'overallRating' | 'dateAdded'>) => {
-  const newBook: BookType = {
-    ...bookData,
-    id: Date.now().toString(),
-    overallRating: calculateOverallRating(bookData.ratings),
-    dateAdded: new Date().toISOString(),
+  const handleAddBook = async (bookData: Omit<BookType, 'id' | 'overallRating' | 'dateAdded'>) => {
+    const newBook: BookType = {
+      ...bookData,
+      id: Date.now().toString(),
+      overallRating: calculateOverallRating(bookData.ratings),
+      dateAdded: new Date().toISOString(),
+    };
+
+    // Optimistic UI update
+    setBooks(prev => [newBook, ...prev]);
+
+    try {
+      await addBook(newBook);
+      console.log('Book saved successfully to Supabase');
+    } catch (error) {
+      console.error('Failed to save book to Supabase:', error);
+      // Revert optimistic update on error
+      setBooks(prev => prev.filter(book => book.id !== newBook.id));
+      alert('Failed to save book. Please try again.');
+    }
   };
-
-  setBooks(prev => [newBook, ...prev]); // Optimistic UI update
-
-  try {
-    await addBook(newBook); // <-- Use addBook from supabaseClient.ts
-  } catch (error) {
-    console.error('Failed to save book to Supabase:', error);
-  }
-};
 
   const handleEditBook = async (bookData: Omit<BookType, 'overallRating'>) => {
-  const updatedBook: BookType = {
-    ...bookData,
-    overallRating: calculateOverallRating(bookData.ratings),
-  };
+    const updatedBook: BookType = {
+      ...bookData,
+      overallRating: calculateOverallRating(bookData.ratings),
+    };
 
-  try {
-    await updateBook(updatedBook);
-    const updatedBooks = books.map(book =>
+    // Optimistic UI update
+    const originalBooks = books;
+    setBooks(prev => prev.map(book =>
       book.id === updatedBook.id ? updatedBook : book
-    );
-    setBooks(updatedBooks);
-    setEditingBook(null);
-  } catch (error) {
-    console.error('Failed to update book:', error);
-  }
-};
+    ));
+
+    try {
+      await updateBook(updatedBook);
+      setEditingBook(null);
+      console.log('Book updated successfully in Supabase');
+    } catch (error) {
+      console.error('Failed to update book:', error);
+      // Revert optimistic update on error
+      setBooks(originalBooks);
+      alert('Failed to update book. Please try again.');
+    }
+  };
 
   const handleAddGenre = (genreName: string) => {
     const newGenre: Genre = {
@@ -115,6 +134,20 @@ const handleAddBook = async (bookData: Omit<BookType, 'id' | 'overallRating' | '
   };
 
   const stats = getStats();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen font-serif flex items-center justify-center" style={{ 
+        background: 'linear-gradient(to bottom right, #d0dfc8, #e8f0e1, #d0dfc8)',
+        fontFamily: '"EB Garamond", serif'
+      }}>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4" style={{ borderColor: '#77a361' }}></div>
+          <p className="text-lg text-gray-600">Loading your books...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen font-serif" style={{ 

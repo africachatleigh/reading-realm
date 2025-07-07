@@ -1,6 +1,5 @@
 import { Book, Genre, Series, Author } from '../types/Book';
 
-const BOOKS_KEY = 'bookTracker_books';
 const GENRES_KEY = 'bookTracker_genres';
 const SERIES_KEY = 'bookTracker_series';
 const AUTHORS_KEY = 'bookTracker_authors';
@@ -26,28 +25,7 @@ export const defaultAuthors: Author[] = [
   { id: '5', name: 'J.K. Rowling' },
 ];
 
-import { fetchBooks, addBook } from '../supabaseClient'; // adjust path as needed
-import { Book } from './types/Book'; // adjust path if needed
-
-export const loadBooks = async (): Promise<Book[]> => {
-  try {
-    const books = await fetchBooks();
-    return books || [];
-  } catch (error) {
-    console.error('Failed to load books:', error);
-    return [];
-  }
-};
-
-export const saveBook = async (book: Book): Promise<void> => {
-  try {
-    await addBook(book);
-  } catch (error) {
-    console.error('Failed to save book:', error);
-  }
-};
-
-// GENRES (still localStorage)
+// GENRES (localStorage)
 export const loadGenres = (): Genre[] => {
   try {
     const stored = localStorage.getItem(GENRES_KEY);
@@ -61,7 +39,7 @@ export const saveGenres = (genres: Genre[]): void => {
   localStorage.setItem(GENRES_KEY, JSON.stringify(genres));
 };
 
-// SERIES (still localStorage)
+// SERIES (localStorage)
 export const loadSeries = (): Series[] => {
   try {
     const stored = localStorage.getItem(SERIES_KEY);
@@ -75,7 +53,7 @@ export const saveSeries = (series: Series[]): void => {
   localStorage.setItem(SERIES_KEY, JSON.stringify(series));
 };
 
-// AUTHORS (still localStorage)
+// AUTHORS (localStorage)
 export const loadAuthors = (): Author[] => {
   try {
     const stored = localStorage.getItem(AUTHORS_KEY);
@@ -88,7 +66,6 @@ export const loadAuthors = (): Author[] => {
 export const saveAuthors = (authors: Author[]): void => {
   localStorage.setItem(AUTHORS_KEY, JSON.stringify(authors));
 };
-
 
 export const calculateOverallRating = (ratings: Book['ratings']): number => {
   const total = ratings.characters + ratings.worldBuilding + ratings.plot + 
