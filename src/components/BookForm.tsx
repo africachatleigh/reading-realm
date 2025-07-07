@@ -37,7 +37,7 @@ const BookForm: React.FC<BookFormProps> = ({
     coverImage: '',
     isStandalone: true,
     seriesName: '',
-    whichWitch: '', // New field for Which Witch selection
+    whichWitch: '', // This will be required
   });
 
   const [ratings, setRatings] = useState({
@@ -98,7 +98,12 @@ const BookForm: React.FC<BookFormProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.title || !formData.author || formData.genres.length === 0) return;
+    
+    // Validation - check required fields
+    if (!formData.title || !formData.author || formData.genres.length === 0 || !formData.whichWitch) {
+      alert('Please fill in all required fields: Title, Author, at least one Genre, and Which Witch selection.');
+      return;
+    }
 
     const bookData = {
       ...formData,
@@ -324,10 +329,14 @@ const BookForm: React.FC<BookFormProps> = ({
             </div>
           </div>
 
-          {/* Which Witch Selection */}
+          {/* Which Witch Selection - REQUIRED */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Which Witch</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Which Witch *
+              <span className="text-red-500 ml-1">Required</span>
+            </label>
             <select
+              required
               value={formData.whichWitch}
               onChange={(e) => setFormData(prev => ({ ...prev, whichWitch: e.target.value }))}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
