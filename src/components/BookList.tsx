@@ -359,7 +359,7 @@ const BookList: React.FC<BookListProps> = ({
                           <span
                             key={index}
                             className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full text-white"
-                            style={{ backgroundColor: '#77a361' }}
+                            style={{ backgroundColor: '#d681a3' }}
                           >
                             {genre}
                           </span>
@@ -367,7 +367,7 @@ const BookList: React.FC<BookListProps> = ({
                         {(book.genres || []).length > 2 && (
                           <span 
                             className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full"
-                            style={{ backgroundColor: '#f0dae3', color: '#77a361' }}
+                            style={{ backgroundColor: '#f0dae3', color: '#d681a3' }}
                           >
                             +{(book.genres || []).length - 2}
                           </span>
@@ -378,14 +378,14 @@ const BookList: React.FC<BookListProps> = ({
                       {book.isStandalone ? (
                         <span 
                           className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full text-white"
-                          style={{ backgroundColor: '#77a361' }}
+                          style={{ backgroundColor: '#d681a3' }}
                         >
                           Standalone
                         </span>
                       ) : (
                         <span 
                           className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full"
-                          style={{ backgroundColor: '#f0dae3', color: '#77a361' }}
+                          style={{ backgroundColor: '#f0dae3', color: '#d681a3' }}
                         >
                           {book.seriesName || 'Series'}
                         </span>
@@ -395,7 +395,7 @@ const BookList: React.FC<BookListProps> = ({
                       {book.whichWitch ? (
                         <span 
                           className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full text-white"
-                          style={{ backgroundColor: '#77a361' }}
+                          style={{ backgroundColor: '#d681a3' }}
                         >
                           {book.whichWitch}
                         </span>
