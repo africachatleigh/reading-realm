@@ -301,8 +301,8 @@ function App() {
         {/* Stats and Filters Layout */}
         <div className="flex flex-col lg:flex-row gap-6 mb-8">
           {/* Stats Column */}
-          <div className="flex flex-col space-y-4 lg:w-64">
-            <div className="bg-white p-4 rounded-xl shadow-sm">
+          <div className="flex flex-row lg:flex-col space-x-4 lg:space-x-0 lg:space-y-4 lg:w-64">
+            <div className="bg-white p-4 rounded-xl shadow-sm flex-1 lg:flex-none">
               <div className="flex items-center">
                 <div className="p-2 rounded-lg" style={{ backgroundColor: '#f0dae3' }}>
                   <BookOpen className="w-5 h-5" style={{ color: '#d681a3' }} />
@@ -314,7 +314,7 @@ function App() {
               </div>
             </div>
 
-            <div className="bg-white p-4 rounded-xl shadow-sm">
+            <div className="bg-white p-4 rounded-xl shadow-sm flex-1 lg:flex-none">
               <div className="flex items-center">
                 <div className="p-2 rounded-lg" style={{ backgroundColor: '#f0dae3' }}>
                   <BarChart3 className="w-5 h-5" style={{ color: '#d681a3' }} />
