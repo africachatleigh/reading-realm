@@ -9,6 +9,7 @@ interface BookFormProps {
   book?: Book | null;
   onSubmit: (book: Omit<Book, 'overallRating'> | Omit<Book, 'id' | 'overallRating' | 'dateAdded'>) => void;
   onClose: () => void;
+  onDelete?: (bookId: string) => void;
   genres: Genre[];
   series: Series[];
   authors: Author[];
@@ -21,6 +22,7 @@ const BookForm: React.FC<BookFormProps> = ({
   book, 
   onSubmit, 
   onClose, 
+  onDelete,
   genres, 
   series, 
   authors, 
@@ -159,6 +161,18 @@ const BookForm: React.FC<BookFormProps> = ({
       setFormData(prev => ({ ...prev, author: newAuthor.trim() }));
       setNewAuthor('');
       setShowAddAuthor(false);
+    }
+  };
+
+  const handleDelete = () => {
+    if (book && onDelete) {
+      const confirmed = window.confirm(
+        `Are you sure you want to delete "${book.title}"? This action cannot be undone.`
+      );
+      if (confirmed) {
+        onDelete(book.id);
+        onClose();
+      }
     }
   };
 
@@ -651,7 +665,7 @@ const BookForm: React.FC<BookFormProps> = ({
             </div>
           </div>
 
-          {/* Submit Button */}
+          {/* Submit and Delete Buttons */}
           <div className="flex space-x-3 pt-4">
             <button
               type="submit"
@@ -662,6 +676,17 @@ const BookForm: React.FC<BookFormProps> = ({
             >
               {book ? 'Update Book' : 'Add Book'}
             </button>
+            
+            {book && onDelete && (
+              <button
+                type="button"
+                onClick={handleDelete}
+                className="px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors font-semibold"
+              >
+                Delete
+              </button>
+            )}
+            
             <button
               type="button"
               onClick={onClose}
