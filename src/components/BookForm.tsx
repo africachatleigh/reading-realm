@@ -54,6 +54,7 @@ const BookForm: React.FC<BookFormProps> = ({
   const [showAddSeries, setShowAddSeries] = useState(false);
   const [newAuthor, setNewAuthor] = useState('');
   const [showAddAuthor, setShowAddAuthor] = useState(false);
+  const [imageChanged, setImageChanged] = useState(false);
 
   // Which Witch options
   const whichWitchOptions = ['Lou Lou', 'Chlo', 'Affo'];
@@ -73,6 +74,7 @@ const BookForm: React.FC<BookFormProps> = ({
         whichWitch: book.whichWitch || '',
       });
       setRatings(book.ratings);
+      setImageChanged(false);
     }
   }, [book]);
 
@@ -82,6 +84,7 @@ const BookForm: React.FC<BookFormProps> = ({
       const reader = new FileReader();
       reader.onload = (e) => {
         setFormData(prev => ({ ...prev, coverImage: e.target?.result as string }));
+        setImageChanged(true);
       };
       reader.readAsDataURL(file);
     }
@@ -109,6 +112,8 @@ const BookForm: React.FC<BookFormProps> = ({
       ...formData,
       ratings,
       seriesName: formData.isStandalone ? undefined : formData.seriesName,
+      // Only include coverImage if it's changed (for edits) or if it's a new book
+      coverImage: imageChanged || !book ? formData.coverImage : undefined,
     };
 
     if (book) {
@@ -156,6 +161,11 @@ const BookForm: React.FC<BookFormProps> = ({
     }
   };
 
+  const handleRemoveImage = () => {
+    setFormData(prev => ({ ...prev, coverImage: '' }));
+    setImageChanged(true);
+  };
+
   const months = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
@@ -195,7 +205,7 @@ const BookForm: React.FC<BookFormProps> = ({
                   />
                   <button
                     type="button"
-                    onClick={() => setFormData(prev => ({ ...prev, coverImage: '' }))}
+                    onClick={handleRemoveImage}
                     className="absolute -top-2 -right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
                   >
                     <X className="w-3 h-3" />
@@ -231,7 +241,7 @@ const BookForm: React.FC<BookFormProps> = ({
                     e.currentTarget.style.color = '#77a361';
                   }}
                 >
-                  Upload Cover
+                  {formData.coverImage ? 'Change Cover' : 'Upload Cover'}
                 </label>
               </div>
             </div>
