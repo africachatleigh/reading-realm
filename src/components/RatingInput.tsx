@@ -52,7 +52,7 @@ const RatingInput: React.FC<RatingInputProps> = ({ label, value, onChange }) => 
           onChange={(e) => onChange(parseInt(e.target.value))}
           className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
           style={{
-            background: `linear-gradient(to right, #e5e7eb 0%, #e5e7eb ${value * 10}%, #d681a3 ${value * 10}%, #d681a3 100%)`
+            background: `linear-gradient(to right, #ebe5e8 0%, #ebe5e8 ${value * 10}%, #d681a3 ${value * 10}%, #d681a3 100%)`
           }}
         />
         <div className="flex justify-between text-xs text-gray-400 mt-1">
