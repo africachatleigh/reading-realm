@@ -45,7 +45,7 @@ const BookCard: React.FC<BookCardProps> = ({ book, onEdit }) => {
         <div className="flex-1 p-4 flex flex-col justify-between min-w-0">
           <div className="space-y-2">
             <div>
-              <h3 className="font-bold text-gray-900 text-base leading-tight mb-1 truncate">
+              <h3 className="font-bold text-gray-900 text-base leading-tight mb-1">
                 {book.title}
               </h3>
               <div className="flex items-center text-gray-600 text-sm space-x-3">
@@ -118,8 +118,8 @@ const BookCard: React.FC<BookCardProps> = ({ book, onEdit }) => {
           </div>
         </div>
 
-        {/* Ratings - Right Column */}
-        <div className="w-28 p-3 bg-gray-50 border-l border-gray-100 flex flex-col">
+        {/* Ratings - Right Column - Hidden on Mobile */}
+        <div className="hidden md:flex w-28 p-3 bg-gray-50 border-l border-gray-100 flex-col">
           <h4 className="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">Ratings</h4>
           <div className="space-y-1.5 text-xs text-gray-600 flex-1">
             <div className="flex justify-between">
