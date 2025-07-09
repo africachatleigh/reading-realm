@@ -1,29 +1,55 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Search, Filter, SortAsc, SortDesc, Grid, List } from 'lucide-react';
 import { Book, Genre } from '../types/Book';
 import { convertToStarRating } from '../utils/storage';
 import BookCard from './BookCard';
 import StarRating from './StarRating';
 
+type SortField = 'title' | 'author' | 'date' | 'rating' | 'genre';
+type ViewMode = 'grid' | 'table';
+
 interface BookListProps {
   books: Book[];
   genres: Genre[];
   onEditBook: (book: Book) => void;
   showFiltersOnly?: boolean;
+  // Filter state props
+  searchTerm: string;
+  setSearchTerm: (term: string) => void;
+  genreFilter: string;
+  setGenreFilter: (genre: string) => void;
+  yearFilter: string;
+  setYearFilter: (year: string) => void;
+  whichWitchFilter: string;
+  setWhichWitchFilter: (witch: string) => void;
+  sortField: SortField;
+  setSortField: (field: SortField) => void;
+  sortDirection: 'asc' | 'desc';
+  setSortDirection: (direction: 'asc' | 'desc') => void;
+  viewMode: ViewMode;
+  setViewMode: (mode: ViewMode) => void;
 }
 
-type SortField = 'title' | 'author' | 'date' | 'rating' | 'genre';
-type ViewMode = 'grid' | 'table';
-
-const BookList: React.FC<BookListProps> = ({ books, genres, onEditBook, showFiltersOnly = false }) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [genreFilter, setGenreFilter] = useState('');
-  const [yearFilter, setYearFilter] = useState('');
-  const [whichWitchFilter, setWhichWitchFilter] = useState('');
-  const [sortField, setSortField] = useState<SortField>('date');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
-  const [viewMode, setViewMode] = useState<ViewMode>('grid');
-
+const BookList: React.FC<BookListProps> = ({ 
+  books, 
+  genres, 
+  onEditBook, 
+  showFiltersOnly = false,
+  searchTerm,
+  setSearchTerm,
+  genreFilter,
+  setGenreFilter,
+  yearFilter,
+  setYearFilter,
+  whichWitchFilter,
+  setWhichWitchFilter,
+  sortField,
+  setSortField,
+  sortDirection,
+  setSortDirection,
+  viewMode,
+  setViewMode
+}) => {
   const uniqueYears = useMemo(() => {
     const years = Array.from(new Set(books.map(book => book.completionYear))).sort((a, b) => b - a);
     return years;
