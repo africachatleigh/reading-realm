@@ -111,6 +111,42 @@ const handleEditBook = async (bookData: Omit<BookType, 'overallRating'>) => {
   }
 };
 
+ const handleAddBook = async (bookData: Omit<BookType, 'id' | 'overallRating' | 'dateadded'>) => {
+  if (!supabaseConnected) {
+    alert('Please connect Supabase first by clicking the "Connect to Supabase" button in the top right.');
+    return;
+  }
+
+  console.log('Adding book with data:', bookData);
+
+  const newBook: BookType = {
+    ...bookData,
+    id: Date.now().toString(),
+    overallRating: calculateOverallRating(bookData.ratings),
+    dateadded: new Date().toISOString(),
+  };
+
+  console.log('New book object:', newBook);
+
+  // Optimistic UI update
+  setBooks(prev => [newBook, ...prev]);
+
+  try {
+    await addBook(newBook);
+    console.log('Book saved successfully to Supabase');
+    
+    // Verify the book was actually saved by refetching
+    const updatedBooks = await fetchBooks();
+    setBooks(updatedBooks);
+    console.log('Books refetched after add:', updatedBooks.length);
+  } catch (error) {
+    console.error('Failed to save book to Supabase:', error);
+    // Revert optimistic update on error
+    setBooks(prev => prev.filter(book => book.id !== newBook.id));
+    alert('Failed to save book. Please check your Supabase connection and try again.');
+  }
+};
+  
   const handleAddGenre = (genreName: string) => {
     const newGenre: Genre = {
       id: Date.now().toString(),
