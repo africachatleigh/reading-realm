@@ -388,8 +388,8 @@ const BookForm: React.FC<BookFormProps> = ({
                 onChange={(e) => setFormData(prev => ({ ...prev, completionMonth: parseInt(e.target.value) }))}
                 className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
                 style={{ 
-                  '--tw-ring-color': '#77a361',
-                  focusRingColor: '#77a361'
+                  '--tw-ring-color': '#d681a3',
+                  focusRingColor: '#d681a3'
                 }}
                 onFocus={(e) => e.target.style.borderColor = '#d681a3'}
                 onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
