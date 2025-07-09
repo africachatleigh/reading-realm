@@ -284,9 +284,9 @@ function App() {
                 className="flex items-center space-x-2 text-white px-6 py-3 rounded-lg transition-colors shadow-md hover:shadow-lg"
                 style={{ 
                   backgroundColor: '#d681a3',
-                  ':hover': { backgroundColor: '#5d8a47' }
+                  ':hover': { backgroundColor: '#c166a0' }
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#5d8a47'}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#c166a0'}
                 onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#d681a3'}
               >
                 <Plus className="w-5 h-5" />
