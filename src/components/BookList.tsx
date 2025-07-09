@@ -60,7 +60,8 @@ const BookList: React.FC<BookListProps> = ({
   const filteredAndSortedBooks = useMemo(() => {
     let filtered = books.filter(book => {
       const matchesSearch = book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           book.author.toLowerCase().includes(searchTerm.toLowerCase());
+                           book.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           (book.seriesName && book.seriesName.toLowerCase().includes(searchTerm.toLowerCase()));
       const matchesGenre = !genreFilter || (book.genres || []).includes(genreFilter);
       const matchesYear = !yearFilter || book.completionYear.toString() === yearFilter;
       const matchesWhichWitch = !whichWitchFilter || book.whichWitch === whichWitchFilter;
@@ -120,7 +121,7 @@ const BookList: React.FC<BookListProps> = ({
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <input
               type="text"
-              placeholder="Search books or authors..."
+              placeholder="Search books, authors, or series..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
