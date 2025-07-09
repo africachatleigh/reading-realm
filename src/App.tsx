@@ -30,17 +30,26 @@ function App() {
       try {
         setIsLoading(true);
         
+        // Debug environment variables
+        console.log('Environment check:', {
+          hasSupabaseUrl: !!import.meta.env.VITE_SUPABASE_URL,
+          hasSupabaseKey: !!import.meta.env.VITE_SUPABASE_ANON_KEY,
+          nodeEnv: import.meta.env.MODE
+        });
+        
         // Test Supabase connection first
         const isConnected = await testConnection();
+        console.log('Supabase connection result:', isConnected);
         setSupabaseConnected(isConnected);
         
         if (isConnected) {
           // If connected, fetch books from Supabase
           const loadedBooks = await fetchBooks();
+          console.log('Loaded books count:', loadedBooks.length);
           setBooks(loadedBooks);
         } else {
           // If not connected, start with empty array
-          console.warn('Supabase not connected, starting with empty book list');
+          console.warn('Supabase not connected, starting with empty book list. Please check your Vercel environment variables.');
           setBooks([]);
         }
       } catch (error) {

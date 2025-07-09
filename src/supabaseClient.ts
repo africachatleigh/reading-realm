@@ -15,19 +15,29 @@ export const supabase = createClient(supabaseUrl || '', supabaseAnonKey || '');
 export async function testConnection(): Promise<boolean> {
   try {
     if (!supabaseUrl || !supabaseAnonKey) {
-      console.error('Supabase not configured. Please add environment variables.');
+      console.error('Supabase not configured. Missing environment variables:', {
+        hasUrl: !!supabaseUrl,
+        hasKey: !!supabaseAnonKey,
+        url: supabaseUrl ? 'Present' : 'Missing',
+        key: supabaseAnonKey ? 'Present' : 'Missing'
+      });
       return false;
     }
     
     const { data, error } = await supabase.from('books').select('count', { count: 'exact', head: true });
     if (error) {
-      console.error('Supabase connection test failed:', error);
+      console.error('Supabase connection test failed:', {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code
+      });
       return false;
     }
-    console.log('Supabase connection successful');
+    console.log('Supabase connection successful. Table accessible.');
     return true;
   } catch (error) {
-    console.error('Supabase connection error:', error);
+    console.error('Supabase connection error (catch block):', error);
     return false;
   }
 }
