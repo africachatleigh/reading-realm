@@ -86,8 +86,8 @@ const BookCard: React.FC<BookCardProps> = ({ book, onEdit }) => {
               <div className="flex items-center space-x-1">
                 {book.isStandalone ? (
                   <>
-                    <BookOpen className="w-3 h-3 text-green-500 flex-shrink-0" />
-                    <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full">
+                    <BookOpen className="w-3 h-3 flex-shrink-0" style={{ color: '#77a361' }} />
+                    <span className="text-xs text-white px-2 py-1 rounded-full" style={{ backgroundColor: '#77a361' }}>
                       Standalone
                     </span>
                   </>
