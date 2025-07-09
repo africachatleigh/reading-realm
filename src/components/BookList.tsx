@@ -125,10 +125,10 @@ const BookList: React.FC<BookListProps> = ({
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
               style={{ 
-                '--tw-ring-color': '#77a361',
-                focusRingColor: '#77a361'
+                '--tw-ring-color': '#d681a3',
+                focusRingColor: '#d681a3'
               }}
-              onFocus={(e) => e.target.style.borderColor = '#77a361'}
+              onFocus={(e) => e.target.style.borderColor = '#d681a3'}
               onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
             />
           </div>
@@ -139,10 +139,10 @@ const BookList: React.FC<BookListProps> = ({
               onChange={(e) => setGenreFilter(e.target.value)}
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent text-sm"
               style={{ 
-                '--tw-ring-color': '#77a361',
-                focusRingColor: '#77a361'
+                '--tw-ring-color': '#d681a3',
+                focusRingColor: '#d681a3'
               }}
-              onFocus={(e) => e.target.style.borderColor = '#77a361'}
+              onFocus={(e) => e.target.style.borderColor = '#d681a3'}
               onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
             >
               <option value="">All Genres</option>
@@ -156,10 +156,10 @@ const BookList: React.FC<BookListProps> = ({
               onChange={(e) => setYearFilter(e.target.value)}
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent text-sm"
               style={{ 
-                '--tw-ring-color': '#77a361',
-                focusRingColor: '#77a361'
+                '--tw-ring-color': '#d681a3',
+                focusRingColor: '#d681a3'
               }}
-              onFocus={(e) => e.target.style.borderColor = '#77a361'}
+              onFocus={(e) => e.target.style.borderColor = '#d681a3'}
               onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
             >
               <option value="">All Years</option>
@@ -173,10 +173,10 @@ const BookList: React.FC<BookListProps> = ({
               onChange={(e) => setWhichWitchFilter(e.target.value)}
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent text-sm"
               style={{ 
-                '--tw-ring-color': '#77a361',
-                focusRingColor: '#77a361'
+                '--tw-ring-color': '#d681a3',
+                focusRingColor: '#d681a3'
               }}
-              onFocus={(e) => e.target.style.borderColor = '#77a361'}
+              onFocus={(e) => e.target.style.borderColor = '#d681a3'}
               onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
             >
               <option value="">All Witches</option>
@@ -194,10 +194,10 @@ const BookList: React.FC<BookListProps> = ({
               }}
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent text-sm"
               style={{ 
-                '--tw-ring-color': '#77a361',
-                focusRingColor: '#77a361'
+                '--tw-ring-color': '#d681a3',
+                focusRingColor: '#d681a3'
               }}
-              onFocus={(e) => e.target.style.borderColor = '#77a361'}
+              onFocus={(e) => e.target.style.borderColor = '#d681a3'}
               onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
             >
               <option value="date-desc">Newest First</option>
@@ -224,7 +224,7 @@ const BookList: React.FC<BookListProps> = ({
                     ? 'text-white' 
                     : 'text-gray-400 hover:text-gray-600'
                 }`}
-                style={viewMode === 'grid' ? { backgroundColor: '#f0dae3', color: '#77a361' } : {}}
+                style={viewMode === 'grid' ? { backgroundColor: '#f0dae3', color: '#d681a3' } : {}}
               >
                 <Grid className="w-5 h-5" />
               </button>
@@ -235,7 +235,7 @@ const BookList: React.FC<BookListProps> = ({
                     ? 'text-white' 
                     : 'text-gray-400 hover:text-gray-600'
                 }`}
-                style={viewMode === 'table' ? { backgroundColor: '#f0dae3', color: '#77a361' } : {}}
+                style={viewMode === 'table' ? { backgroundColor: '#f0dae3', color: '#d681a3' } : {}}
               >
                 <List className="w-5 h-5" />
               </button>
