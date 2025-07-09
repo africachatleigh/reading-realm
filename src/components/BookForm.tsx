@@ -243,7 +243,7 @@ const BookForm: React.FC<BookFormProps> = ({
                   htmlFor="cover-upload"
                   className="cursor-pointer text-white px-4 py-2 rounded-lg border transition-colors"
                   style={{ 
-                    backgroundColor: '#d0dfc8',
+                    backgroundColor: '#f0dae3',
                     color: '#77a361',
                     borderColor: '#77a361'
                   }}
@@ -252,7 +252,7 @@ const BookForm: React.FC<BookFormProps> = ({
                     e.currentTarget.style.color = 'white';
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = '#d0dfc8';
+                    e.currentTarget.style.backgroundColor = '#f0dae3';
                     e.currentTarget.style.color = '#77a361';
                   }}
                 >
@@ -648,7 +648,7 @@ const BookForm: React.FC<BookFormProps> = ({
               />
             </div>
 
-            <div className="p-4 rounded-lg" style={{ backgroundColor: '#d0dfc8' }}>
+            <div className="p-4 rounded-lg" style={{ backgroundColor: '#f0dae3' }}>
               <div className="flex justify-between items-center">
                 <span className="font-semibold text-gray-900">Overall Rating:</span>
                 <div className="flex items-center space-x-3">
