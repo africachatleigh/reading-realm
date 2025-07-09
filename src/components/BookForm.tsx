@@ -430,7 +430,7 @@ const BookForm: React.FC<BookFormProps> = ({
                   <span
                     key={genre}
                     className="inline-flex items-center px-3 py-1 rounded-full text-sm text-white"
-                    style={{ backgroundColor: '#77a361' }}
+                    style={{ backgroundColor: '#d681a3' }}
                   >
                     {genre}
                     <button
