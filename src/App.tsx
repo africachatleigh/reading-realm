@@ -243,7 +243,7 @@ function App() {
         fontFamily: '"EB Garamond", serif'
       }}>
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4" style={{ borderColor: '#77a361' }}></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4" style={{ borderColor: '#d681a3' }}></div>
           <p className="text-lg text-gray-600">Loading your books...</p>
         </div>
       </div>
@@ -260,7 +260,7 @@ function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div className="flex items-center space-x-3">
-              <div className="p-2 rounded-lg shadow-md" style={{ background: 'linear-gradient(to bottom right, #77a361, #5d8a47)' }}>
+              <div className="p-2 rounded-lg shadow-md" style={{ background: 'linear-gradient(to bottom right, #d681a3, #5d8a47)' }}>
                 <BookOpen className="w-8 h-8 text-white" />
               </div>
               <div>
@@ -283,11 +283,11 @@ function App() {
                 onClick={() => setShowBookForm(true)}
                 className="flex items-center space-x-2 text-white px-6 py-3 rounded-lg transition-colors shadow-md hover:shadow-lg"
                 style={{ 
-                  backgroundColor: '#77a361',
+                  backgroundColor: '#d681a3',
                   ':hover': { backgroundColor: '#5d8a47' }
                 }}
                 onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#5d8a47'}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#77a361'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#d681a3'}
               >
                 <Plus className="w-5 h-5" />
                 <span>Add Book</span>
@@ -305,7 +305,7 @@ function App() {
             <div className="bg-white p-4 rounded-xl shadow-sm">
               <div className="flex items-center">
                 <div className="p-2 rounded-lg" style={{ backgroundColor: '#f0dae3' }}>
-                  <BookOpen className="w-5 h-5" style={{ color: '#77a361' }} />
+                  <BookOpen className="w-5 h-5" style={{ color: '#d681a3' }} />
                 </div>
                 <div className="ml-3">
                   <p className="text-xs font-medium text-gray-600">Total Books</p>
@@ -317,7 +317,7 @@ function App() {
             <div className="bg-white p-4 rounded-xl shadow-sm">
               <div className="flex items-center">
                 <div className="p-2 rounded-lg" style={{ backgroundColor: '#f0dae3' }}>
-                  <BarChart3 className="w-5 h-5" style={{ color: '#77a361' }} />
+                  <BarChart3 className="w-5 h-5" style={{ color: '#d681a3' }} />
                 </div>
                 <div className="ml-3">
                   <p className="text-xs font-medium text-gray-600">This Year</p>
