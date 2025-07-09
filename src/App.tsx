@@ -239,7 +239,7 @@ function App() {
   if (isLoading) {
     return (
       <div className="min-h-screen font-serif flex items-center justify-center" style={{ 
-        background: 'linear-gradient(to bottom right, #d0dfc8, #e8f0e1, #d0dfc8)',
+        background: 'linear-gradient(to bottom right, #f0dae3, #e8f0e1, #f0dae3)',
         fontFamily: '"EB Garamond", serif'
       }}>
         <div className="text-center">
@@ -252,7 +252,7 @@ function App() {
 
   return (
     <div className="min-h-screen font-serif" style={{ 
-      background: 'linear-gradient(to bottom right, #d0dfc8, #e8f0e1, #d0dfc8)',
+      background: 'linear-gradient(to bottom right, #f0dae3, #e8f0e1, #f0dae3)',
       fontFamily: '"EB Garamond", serif'
     }}>
       {/* Header */}
@@ -304,7 +304,7 @@ function App() {
           <div className="flex flex-col space-y-4 lg:w-64">
             <div className="bg-white p-4 rounded-xl shadow-sm">
               <div className="flex items-center">
-                <div className="p-2 rounded-lg" style={{ backgroundColor: '#d0dfc8' }}>
+                <div className="p-2 rounded-lg" style={{ backgroundColor: '#f0dae3' }}>
                   <BookOpen className="w-5 h-5" style={{ color: '#77a361' }} />
                 </div>
                 <div className="ml-3">
@@ -316,7 +316,7 @@ function App() {
 
             <div className="bg-white p-4 rounded-xl shadow-sm">
               <div className="flex items-center">
-                <div className="p-2 rounded-lg" style={{ backgroundColor: '#d0dfc8' }}>
+                <div className="p-2 rounded-lg" style={{ backgroundColor: '#f0dae3' }}>
                   <BarChart3 className="w-5 h-5" style={{ color: '#77a361' }} />
                 </div>
                 <div className="ml-3">
