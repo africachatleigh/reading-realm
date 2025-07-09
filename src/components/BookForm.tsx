@@ -65,13 +65,14 @@ const BookForm: React.FC<BookFormProps> = ({
       setFormData({
         title: book.title,
         author: book.author,
-        completionMonth: book.completionMonth,
-        completionYear: book.completionYear,
+        // Handle both camelCase and database column names
+        completionMonth: book.completionMonth || book.completionmonth,
+        completionYear: book.completionYear || book.completionyear,
         genres: book.genres || [],
-        coverImage: book.coverImage || '',
-        isStandalone: book.isStandalone,
-        seriesName: book.seriesName || '',
-        whichWitch: book.whichWitch || '',
+        coverImage: book.coverImage || book.coverimage || '',
+        isStandalone: book.isStandalone !== undefined ? book.isStandalone : book.isstandalone,
+        seriesName: book.seriesName || book.seriesname || '',
+        whichWitch: book.whichWitch || book.whichwitch || '',
       });
       setRatings(book.ratings);
       setImageChanged(false);
