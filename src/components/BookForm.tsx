@@ -244,16 +244,16 @@ const BookForm: React.FC<BookFormProps> = ({
                   className="cursor-pointer text-white px-4 py-2 rounded-lg border transition-colors"
                   style={{ 
                     backgroundColor: '#f0dae3',
-                    color: '#77a361',
-                    borderColor: '#77a361'
+                    color: '#d681a3',
+                    borderColor: '#d681a3'
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = '#77a361';
+                    e.currentTarget.style.backgroundColor = '#d681a3';
                     e.currentTarget.style.color = 'white';
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.backgroundColor = '#f0dae3';
-                    e.currentTarget.style.color = '#77a361';
+                    e.currentTarget.style.color = '#d681a3';
                   }}
                 >
                   {formData.coverImage ? 'Change Cover' : 'Upload Cover'}
@@ -274,10 +274,10 @@ const BookForm: React.FC<BookFormProps> = ({
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
                 placeholder="Enter book title"
                 style={{ 
-                  '--tw-ring-color': '#77a361',
-                  focusRingColor: '#77a361'
+                  '--tw-ring-color': '#d681a3',
+                  focusRingColor: '#d681a3'
                 }}
-                onFocus={(e) => e.target.style.borderColor = '#77a361'}
+                onFocus={(e) => e.target.style.borderColor = '#d681a3'}
                 onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
               />
             </div>
@@ -291,10 +291,10 @@ const BookForm: React.FC<BookFormProps> = ({
                   onChange={(e) => setFormData(prev => ({ ...prev, author: e.target.value }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
                   style={{ 
-                    '--tw-ring-color': '#77a361',
-                    focusRingColor: '#77a361'
+                    '--tw-ring-color': '#d681a3',
+                    focusRingColor: '#d681a3'
                   }}
-                  onFocus={(e) => e.target.style.borderColor = '#77a361'}
+                  onFocus={(e) => e.target.style.borderColor = '#d681a3'}
                   onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
                 >
                   <option value="">Select an author</option>
@@ -308,7 +308,7 @@ const BookForm: React.FC<BookFormProps> = ({
                     type="button"
                     onClick={() => setShowAddAuthor(true)}
                     className="flex items-center space-x-1 hover:text-green-700 text-sm"
-                    style={{ color: '#77a361' }}
+                    style={{ color: '#d681a3' }}
                   >
                     <Plus className="w-4 h-4" />
                     <span>Add new author</span>
@@ -322,19 +322,19 @@ const BookForm: React.FC<BookFormProps> = ({
                       placeholder="Enter author name"
                       className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
                       style={{ 
-                        '--tw-ring-color': '#77a361',
-                        focusRingColor: '#77a361'
+                        '--tw-ring-color': '#d681a3',
+                        focusRingColor: '#d681a3'
                       }}
-                      onFocus={(e) => e.target.style.borderColor = '#77a361'}
+                      onFocus={(e) => e.target.style.borderColor = '#d681a3'}
                       onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
                     />
                     <button
                       type="button"
                       onClick={handleAddAuthor}
                       className="px-4 py-2 text-white rounded-lg transition-colors"
-                      style={{ backgroundColor: '#77a361' }}
+                      style={{ backgroundColor: '#d681a3' }}
                       onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#5d8a47'}
-                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#77a361'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#d681a3'}
                     >
                       Add
                     </button>
@@ -366,10 +366,10 @@ const BookForm: React.FC<BookFormProps> = ({
               onChange={(e) => setFormData(prev => ({ ...prev, whichWitch: e.target.value }))}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
               style={{ 
-                '--tw-ring-color': '#77a361',
-                focusRingColor: '#77a361'
+                '--tw-ring-color': '#d681a3',
+                focusRingColor: '#d681a3'
               }}
-              onFocus={(e) => e.target.style.borderColor = '#77a361'}
+              onFocus={(e) => e.target.style.borderColor = '#d681a3'}
               onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
             >
               <option value="">Select a witch</option>
@@ -391,7 +391,7 @@ const BookForm: React.FC<BookFormProps> = ({
                   '--tw-ring-color': '#77a361',
                   focusRingColor: '#77a361'
                 }}
-                onFocus={(e) => e.target.style.borderColor = '#77a361'}
+                onFocus={(e) => e.target.style.borderColor = '#d681a3'}
                 onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
               >
                 {months.map((month, index) => (
@@ -404,10 +404,10 @@ const BookForm: React.FC<BookFormProps> = ({
                 onChange={(e) => setFormData(prev => ({ ...prev, completionYear: parseInt(e.target.value) }))}
                 className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
                 style={{ 
-                  '--tw-ring-color': '#77a361',
-                  focusRingColor: '#77a361'
+                  '--tw-ring-color': '#d681a3',
+                  focusRingColor: '#d681a3'
                 }}
-                onFocus={(e) => e.target.style.borderColor = '#77a361'}
+                onFocus={(e) => e.target.style.borderColor = '#d681a3'}
                 onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
               >
                 {years.map(year => (
