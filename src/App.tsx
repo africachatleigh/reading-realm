@@ -285,9 +285,7 @@ function App() {
                   <BookOpen className="w-5 h-5" style={{ color: '#77a361' }} />
                 </div>
                 <div className="ml-3">
-                  <p className="text-xs font-medium text-gray-600">
-                    {searchTerm || genreFilter || yearFilter || whichWitchFilter ? 'Filtered Books' : 'Total Books'}
-                  </p>
+                  <p className="text-xs font-medium text-gray-600">Total Books</p>
                   <p className="text-xl font-bold text-gray-900">{stats.totalBooks}</p>
                 </div>
               </div>
@@ -299,9 +297,7 @@ function App() {
                   <BarChart3 className="w-5 h-5" style={{ color: '#77a361' }} />
                 </div>
                 <div className="ml-3">
-                  <p className="text-xs font-medium text-gray-600">
-                    {searchTerm || genreFilter || yearFilter || whichWitchFilter ? 'Filtered This Year' : 'This Year'}
-                  </p>
+                  <p className="text-xs font-medium text-gray-600">This Year</p>
                   <p className="text-xl font-bold text-gray-900">{stats.booksThisYear}</p>
                 </div>
               </div>
