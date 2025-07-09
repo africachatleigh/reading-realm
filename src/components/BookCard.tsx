@@ -69,13 +69,13 @@ const BookCard: React.FC<BookCardProps> = ({ book, onEdit }) => {
                     <span
                       key={index}
                       className="text-xs px-2 py-0.5 rounded-full"
-                      style={{ backgroundColor: '#f0dae3', color: '#77a361' }}
+                      style={{ backgroundColor: '#f0dae3', color: '#d681a3' }}
                     >
                       {genre}
                     </span>
                   ))}
                   {(book.genres || []).length > 2 && (
-                    <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: '#f0dae3', color: '#77a361' }}>
+                    <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: '#f0dae3', color: '#d681a3' }}>
                       +{(book.genres || []).length - 2}
                     </span>
                   )}
@@ -86,15 +86,15 @@ const BookCard: React.FC<BookCardProps> = ({ book, onEdit }) => {
               <div className="flex items-center space-x-1">
                 {book.isStandalone ? (
                   <>
-                    <BookOpen className="w-3 h-3 flex-shrink-0" style={{ color: '#77a361' }} />
-                    <span className="text-xs text-white px-2 py-1 rounded-full" style={{ backgroundColor: '#77a361' }}>
+                    <BookOpen className="w-3 h-3 flex-shrink-0" style={{ color: '#d681a3' }} />
+                    <span className="text-xs text-white px-2 py-1 rounded-full" style={{ backgroundColor: '#d681a3' }}>
                       Standalone
                     </span>
                   </>
                 ) : (
                   <>
-                    <Sparkles className="w-3 h-3 flex-shrink-0" style={{ color: '#77a361' }} />
-                    <span className="text-xs text-white px-2 py-1 rounded-full truncate" style={{ backgroundColor: '#77a361' }}>
+                    <Sparkles className="w-3 h-3 flex-shrink-0" style={{ color: '#d681a3' }} />
+                    <span className="text-xs text-white px-2 py-1 rounded-full truncate" style={{ backgroundColor: '#d681a3' }}>
                       {book.seriesName || 'Series'}
                     </span>
                   </>
@@ -104,8 +104,8 @@ const BookCard: React.FC<BookCardProps> = ({ book, onEdit }) => {
               {/* Which Witch Information */}
               {book.whichWitch && (
                 <div className="flex items-center space-x-1">
-                  <Users className="w-3 h-3 flex-shrink-0" style={{ color: '#77a361' }} />
-                  <span className="text-xs text-white px-2 py-1 rounded-full" style={{ backgroundColor: '#77a361' }}>
+                  <Users className="w-3 h-3 flex-shrink-0" style={{ color: '#d681a3' }} />
+                  <span className="text-xs text-white px-2 py-1 rounded-full" style={{ backgroundColor: '#d681a3' }}>
                     {book.whichWitch}
                   </span>
                 </div>
