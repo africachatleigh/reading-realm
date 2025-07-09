@@ -1,4 +1,4 @@
-import { addBook, updateBook, fetchBooks, testConnection } from './supabaseClient';
+import { addBook, updateBook, fetchBooks, testConnection, deleteBook } from './supabaseClient';
 import React, { useState, useEffect, useMemo } from 'react';
 import { Plus, BarChart3, BookOpen, AlertCircle } from 'lucide-react';
 import { Book as BookType, Genre, Series, Author } from './types/Book';
@@ -127,9 +127,6 @@ function App() {
     }
 
     try {
-      // Import deleteBook function
-      const { deleteBook } = await import('./supabaseClient');
-      
       // Remove from UI first (optimistic update)
       setBooks(prev => prev.filter(book => book.id !== bookId));
       
