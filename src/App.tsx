@@ -67,42 +67,6 @@ function App() {
     setAuthors(loadAuthors());
   }, []);
   
-  const handleAddBook = async (bookData: Omit<BookType, 'id' | 'overallRating' | 'dateadded'>) => {
-    if (!supabaseConnected) {
-      alert('Please connect Supabase first by clicking the "Connect to Supabase" button in the top right.');
-      return;
-    }
-
-    console.log('Adding book with data:', bookData);
-
-    const newBook: BookType = {
-      ...bookData,
-      id: Date.now().toString(),
-      overallRating: calculateOverallRating(bookData.ratings),
-      dateadded: new Date().toISOString(),
-    };
-
-    console.log('New book object:', newBook);
-
-    // Optimistic UI update
-    setBooks(prev => [newBook, ...prev]);
-
-    try {
-      await addBook(newBook);
-      console.log('Book saved successfully to Supabase');
-      
-      // Verify the book was actually saved by refetching
-      const updatedBooks = await fetchBooks();
-      setBooks(updatedBooks);
-      console.log('Books refetched after add:', updatedBooks.length);
-    } catch (error) {
-      console.error('Failed to save book to Supabase:', error);
-      // Revert optimistic update on error
-      setBooks(prev => prev.filter(book => book.id !== newBook.id));
-      alert('Failed to save book. Please check your Supabase connection and try again.');
-    }
-  };
-
 const handleEditBook = async (bookData: Omit<BookType, 'overallRating'>) => {
   if (!supabaseConnected) {
     alert('Please connect Supabase first by clicking the "Connect to Supabase" button in the top right.');
@@ -116,7 +80,7 @@ const handleEditBook = async (bookData: Omit<BookType, 'overallRating'>) => {
     return;
   }
 
-  const updatedBook: BookType = {
+  const updatedBookForOptimistic: BookType = {
     ...bookData,
     // Preserve the existing coverImage if no new image was provided
     coverImage: bookData.coverImage !== undefined ? bookData.coverImage : originalBook.coverImage,
@@ -126,11 +90,18 @@ const handleEditBook = async (bookData: Omit<BookType, 'overallRating'>) => {
   // Optimistic UI update with preserved image
   const originalBooks = books;
   setBooks(prev => prev.map(book =>
-    book.id === updatedBook.id ? updatedBook : book
+    book.id === updatedBookForOptimistic.id ? updatedBookForOptimistic : book
   ));
 
   try {
-    await updateBook(updatedBook);
+    // The updateBook function now returns the updated book with the final image URL
+    const finalUpdatedBook = await updateBook(updatedBookForOptimistic);
+    
+    // Update the UI with the final book data (with correct image URL)
+    setBooks(prev => prev.map(book =>
+      book.id === finalUpdatedBook.id ? finalUpdatedBook : book
+    ));
+    
     setEditingBook(null);
     console.log('Book updated successfully in Supabase');
   } catch (error) {
