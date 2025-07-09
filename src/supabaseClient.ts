@@ -49,6 +49,99 @@ export async function testConnection(): Promise<boolean> {
   }
 }
 
+// Helper function to convert base64 to File object
+function base64ToFile(base64: string, filename: string): File {
+  const arr = base64.split(',');
+  const mime = arr[0].match(/:(.*?);/)?.[1] || 'image/jpeg';
+  const bstr = atob(arr[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  return new File([u8arr], filename, { type: mime });
+}
+
+// Helper function to generate unique filename
+function generateImageFilename(bookId: string, originalName?: string): string {
+  const timestamp = Date.now();
+  const extension = originalName?.split('.').pop() || 'jpg';
+  return `book-covers/${bookId}-${timestamp}.${extension}`;
+}
+
+// Upload image to Supabase Storage
+export async function uploadBookCover(bookId: string, imageFile: File | string): Promise<string> {
+  try {
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('Supabase not configured. Please add environment variables.');
+    }
+
+    let fileToUpload: File;
+    let filename: string;
+
+    if (typeof imageFile === 'string') {
+      // Handle base64 string
+      filename = generateImageFilename(bookId);
+      fileToUpload = base64ToFile(imageFile, filename);
+    } else {
+      // Handle File object
+      filename = generateImageFilename(bookId, imageFile.name);
+      fileToUpload = imageFile;
+    }
+
+    console.log('Uploading image to Supabase Storage:', filename);
+
+    const { data, error } = await supabase.storage
+      .from('book-covers')
+      .upload(filename, fileToUpload, {
+        cacheControl: '3600',
+        upsert: false
+      });
+
+    if (error) {
+      console.error('Error uploading image:', error);
+      throw error;
+    }
+
+    // Get public URL
+    const { data: { publicUrl } } = supabase.storage
+      .from('book-covers')
+      .getPublicUrl(filename);
+
+    console.log('Successfully uploaded image:', publicUrl);
+    return publicUrl;
+  } catch (error) {
+    console.error('Failed to upload image:', error);
+    throw error;
+  }
+}
+
+// Delete image from Supabase Storage
+export async function deleteBookCover(imageUrl: string): Promise<void> {
+  try {
+    if (!imageUrl || !imageUrl.includes('book-covers/')) {
+      return; // Not a storage URL, skip deletion
+    }
+
+    const filename = imageUrl.split('book-covers/')[1];
+    if (!filename) return;
+
+    console.log('Deleting image from Supabase Storage:', filename);
+
+    const { error } = await supabase.storage
+      .from('book-covers')
+      .remove([`book-covers/${filename}`]);
+
+    if (error) {
+      console.error('Error deleting image:', error);
+      // Don't throw here - image deletion failure shouldn't stop book operations
+    }
+  } catch (error) {
+    console.error('Failed to delete image:', error);
+    // Don't throw here - image deletion failure shouldn't stop book operations
+  }
+}
+
 // Fetch all books from Supabase
 export async function fetchBooks(): Promise<Book[]> {
   try {
@@ -85,6 +178,24 @@ export async function addBook(book: Book): Promise<void> {
 
     console.log('Adding book to Supabase:', book.title);
     
+    let coverImageUrl = null;
+    
+    // Handle image upload if present
+    if (book.coverImage) {
+      try {
+        if (book.coverImage.startsWith('data:')) {
+          // Base64 image - upload to storage
+          coverImageUrl = await uploadBookCover(book.id, book.coverImage);
+        } else {
+          // Already a URL - use as is
+          coverImageUrl = book.coverImage;
+        }
+      } catch (imageError) {
+        console.error('Failed to upload cover image:', imageError);
+        // Continue without image rather than failing entirely
+      }
+    }
+    
     // Ensure all required fields are present and properly formatted
     const bookToInsert = {
       id: book.id,
@@ -93,7 +204,7 @@ export async function addBook(book: Book): Promise<void> {
       completionmonth: book.completionMonth,
       completionyear: book.completionYear,
       genres: book.genres || [],
-      coverimage: book.coverImage || null,
+      coverimage: coverImageUrl,
       ratings: book.ratings,
       overallrating: book.overallRating,
       dateadded: book.dateadded,
@@ -109,10 +220,11 @@ export async function addBook(book: Book): Promise<void> {
       .insert([bookToInsert]);
     
     if (error) {
+      // If book insert fails, clean up uploaded image
+      if (coverImageUrl) {
+        await deleteBookCover(coverImageUrl);
+      }
       console.error('Error adding book:', error);
-      console.error('Error details:', error.details);
-      console.error('Error hint:', error.hint);
-      console.error('Error message:', error.message);
       throw error;
     }
     
@@ -132,6 +244,40 @@ export async function updateBook(book: Book): Promise<void> {
 
     console.log('Updating book in Supabase:', book.title);
     
+    // Get the current book data to preserve existing coverimage
+    const { data: currentBook, error: fetchError } = await supabase
+      .from('books')
+      .select('coverimage')
+      .eq('id', book.id)
+      .single();
+    
+    if (fetchError) {
+      console.error('Error fetching current book data:', fetchError);
+      throw fetchError;
+    }
+    
+    let coverImageUrl = currentBook.coverimage;
+    
+    // Handle image update if a new image is provided
+    if (book.coverImage && book.coverImage.startsWith('data:')) {
+      try {
+        // Delete old image if it exists
+        if (currentBook.coverimage) {
+          await deleteBookCover(currentBook.coverimage);
+        }
+        
+        // Upload new image
+        coverImageUrl = await uploadBookCover(book.id, book.coverImage);
+      } catch (imageError) {
+        console.error('Failed to update cover image:', imageError);
+        // Keep existing image if upload fails
+        coverImageUrl = currentBook.coverimage;
+      }
+    } else if (book.coverImage && !book.coverImage.startsWith('data:')) {
+      // Already a URL - use as is
+      coverImageUrl = book.coverImage;
+    }
+    
     // Ensure all fields are properly formatted for update
     const bookToUpdate = {
       title: book.title,
@@ -139,7 +285,7 @@ export async function updateBook(book: Book): Promise<void> {
       completionmonth: book.completionMonth,
       completionyear: book.completionYear,
       genres: book.genres || [],
-      coverimage: book.coverImage || null,
+      coverimage: coverImageUrl,
       ratings: book.ratings,
       overallrating: book.overallRating,
       dateadded: book.dateadded,
@@ -147,6 +293,8 @@ export async function updateBook(book: Book): Promise<void> {
       seriesname: book.seriesName || null,
       whichwitch: book.whichWitch || null
     };
+
+    console.log('Book data being updated:', bookToUpdate);
 
     const { error } = await supabase
       .from('books')
@@ -173,6 +321,18 @@ export async function deleteBook(id: string): Promise<void> {
     }
 
     console.log('Deleting book from Supabase:', id);
+    
+    // Get the book data to clean up associated image
+    const { data: book, error: fetchError } = await supabase
+      .from('books')
+      .select('coverimage')
+      .eq('id', id)
+      .single();
+    
+    if (!fetchError && book?.coverimage) {
+      await deleteBookCover(book.coverimage);
+    }
+    
     const { error } = await supabase
       .from('books')
       .delete()
