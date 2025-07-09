@@ -43,11 +43,11 @@ const BookForm: React.FC<BookFormProps> = ({
   });
 
   const [ratings, setRatings] = useState({
-    characters: 5,
-    worldBuilding: 5,
-    plot: 5,
-    writingStyle: 5,
-    enjoyment: 5,
+    characters: 5 as number | null,
+    worldBuilding: 5 as number | null,
+    plot: 5 as number | null,
+    writingStyle: 5 as number | null,
+    enjoyment: 5 as number | null,
   });
 
   const [newGenre, setNewGenre] = useState('');
@@ -333,7 +333,7 @@ const BookForm: React.FC<BookFormProps> = ({
                       onClick={handleAddAuthor}
                       className="px-4 py-2 text-white rounded-lg transition-colors"
                       style={{ backgroundColor: '#d681a3' }}
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#5d8a47'}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#c166a0'}
                       onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#d681a3'}
                     >
                       Add
@@ -404,10 +404,10 @@ const BookForm: React.FC<BookFormProps> = ({
                 onChange={(e) => setFormData(prev => ({ ...prev, completionYear: parseInt(e.target.value) }))}
                 className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
                 style={{ 
-                  '--tw-ring-color': '#d681a3',
-                  focusRingColor: '#d681a3'
+                  '--tw-ring-color': '#77a361',
+                  focusRingColor: '#77a361'
                 }}
-                onFocus={(e) => e.target.style.borderColor = '#d681a3'}
+                onFocus={(e) => e.target.style.borderColor = '#77a361'}
                 onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
               >
                 {years.map(year => (
@@ -430,7 +430,7 @@ const BookForm: React.FC<BookFormProps> = ({
                   <span
                     key={genre}
                     className="inline-flex items-center px-3 py-1 rounded-full text-sm text-white"
-                    style={{ backgroundColor: '#d681a3' }}
+                    style={{ backgroundColor: '#77a361' }}
                   >
                     {genre}
                     <button
@@ -471,7 +471,7 @@ const BookForm: React.FC<BookFormProps> = ({
               <button
                 type="button"
                 onClick={() => setShowAddGenre(true)}
-                className="flex items-center space-x-1 hover:text-green-700 text-sm"
+                className="flex items-center space-x-1 hover:text-pink-700 text-sm"
                 style={{ color: '#d681a3' }}
               >
                 <Plus className="w-4 h-4" />
@@ -497,7 +497,7 @@ const BookForm: React.FC<BookFormProps> = ({
                   onClick={handleAddGenre}
                   className="px-4 py-2 text-white rounded-lg transition-colors"
                   style={{ backgroundColor: '#d681a3' }}
-                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#5d8a47'}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#c166a0'}
                   onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#d681a3'}
                 >
                   Add
@@ -553,10 +553,10 @@ const BookForm: React.FC<BookFormProps> = ({
                     onChange={(e) => setFormData(prev => ({ ...prev, seriesName: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
                     style={{ 
-                      '--tw-ring-color': '#d681a3',
-                      focusRingColor: '#d681a3'
+                      '--tw-ring-color': '#77a361',
+                      focusRingColor: '#77a361'
                     }}
-                    onFocus={(e) => e.target.style.borderColor = '#d681a3'}
+                    onFocus={(e) => e.target.style.borderColor = '#77a361'}
                     onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
                   >
                     <option value="">Select a series</option>
@@ -570,7 +570,7 @@ const BookForm: React.FC<BookFormProps> = ({
                       type="button"
                       onClick={() => setShowAddSeries(true)}
                       className="flex items-center space-x-1 hover:text-green-700 text-sm"
-                      style={{ color: '#d681a3' }}
+                      style={{ color: '#77a361' }}
                     >
                       <Plus className="w-4 h-4" />
                       <span>Add new series</span>
@@ -584,19 +584,19 @@ const BookForm: React.FC<BookFormProps> = ({
                         placeholder="Enter series name"
                         className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
                         style={{ 
-                          '--tw-ring-color': '#d681a3',
-                          focusRingColor: '#d681a3'
+                          '--tw-ring-color': '#77a361',
+                          focusRingColor: '#77a361'
                         }}
-                        onFocus={(e) => e.target.style.borderColor = '#d681a3'}
+                        onFocus={(e) => e.target.style.borderColor = '#77a361'}
                         onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
                       />
                       <button
                         type="button"
                         onClick={handleAddSeries}
                         className="px-4 py-2 text-white rounded-lg transition-colors"
-                        style={{ backgroundColor: '#d681a3' }}
+                        style={{ backgroundColor: '#77a361' }}
                         onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#5d8a47'}
-                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#d681a3'}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#77a361'}
                       >
                         Add
                       </button>
@@ -671,7 +671,7 @@ const BookForm: React.FC<BookFormProps> = ({
               type="submit"
               className="flex-1 text-white py-3 px-4 rounded-lg transition-colors font-semibold"
               style={{ backgroundColor: '#d681a3' }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#5d8a47'}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#c166a0'}
               onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#d681a3'}
             >
               {book ? 'Update Book' : 'Add Book'}
