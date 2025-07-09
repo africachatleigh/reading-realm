@@ -103,34 +103,43 @@ function App() {
     }
   };
 
-  const handleEditBook = async (bookData: Omit<BookType, 'overallRating'>) => {
-    if (!supabaseConnected) {
-      alert('Please connect Supabase first by clicking the "Connect to Supabase" button in the top right.');
-      return;
-    }
+const handleEditBook = async (bookData: Omit<BookType, 'overallRating'>) => {
+  if (!supabaseConnected) {
+    alert('Please connect Supabase first by clicking the "Connect to Supabase" button in the top right.');
+    return;
+  }
 
-    const updatedBook: BookType = {
-      ...bookData,
-      overallRating: calculateOverallRating(bookData.ratings),
-    };
+  // Find the original book to preserve existing data
+  const originalBook = books.find(book => book.id === bookData.id);
+  if (!originalBook) {
+    console.error('Original book not found');
+    return;
+  }
 
-    // Optimistic UI update
-    const originalBooks = books;
-    setBooks(prev => prev.map(book =>
-      book.id === updatedBook.id ? updatedBook : book
-    ));
-
-    try {
-      await updateBook(updatedBook);
-      setEditingBook(null);
-      console.log('Book updated successfully in Supabase');
-    } catch (error) {
-      console.error('Failed to update book:', error);
-      // Revert optimistic update on error
-      setBooks(originalBooks);
-      alert('Failed to update book. Please check your Supabase connection and try again.');
-    }
+  const updatedBook: BookType = {
+    ...bookData,
+    // Preserve the existing coverImage if no new image was provided
+    coverImage: bookData.coverImage !== undefined ? bookData.coverImage : originalBook.coverImage,
+    overallRating: calculateOverallRating(bookData.ratings),
   };
+
+  // Optimistic UI update with preserved image
+  const originalBooks = books;
+  setBooks(prev => prev.map(book =>
+    book.id === updatedBook.id ? updatedBook : book
+  ));
+
+  try {
+    await updateBook(updatedBook);
+    setEditingBook(null);
+    console.log('Book updated successfully in Supabase');
+  } catch (error) {
+    console.error('Failed to update book:', error);
+    // Revert optimistic update on error
+    setBooks(originalBooks);
+    alert('Failed to update book. Please check your Supabase connection and try again.');
+  }
+};
 
   const handleAddGenre = (genreName: string) => {
     const newGenre: Genre = {
