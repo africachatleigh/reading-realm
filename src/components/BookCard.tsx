@@ -69,7 +69,7 @@ const BookCard: React.FC<BookCardProps> = ({ book, onEdit }) => {
                     <span
                       key={index}
                       className="text-xs px-2 py-0.5 rounded-full"
-                      style={{ backgroundColor: '#d0dfc8', color: '#77a361' }}
+                      style={{ backgroundColor: '#f0dae3', color: '#77a361' }}
                     >
                       {genre}
                     </span>
