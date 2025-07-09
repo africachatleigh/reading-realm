@@ -239,7 +239,7 @@ function App() {
   if (isLoading) {
     return (
       <div className="min-h-screen font-serif flex items-center justify-center" style={{ 
-        background: 'linear-gradient(to bottom right, #f0dae3, #e8f0e1, #f0dae3)',
+        background: 'linear-gradient(to bottom right, #f0dae3, #f5e6ec, #f0dae3)',
         fontFamily: '"EB Garamond", serif'
       }}>
         <div className="text-center">
@@ -252,7 +252,7 @@ function App() {
 
   return (
     <div className="min-h-screen font-serif" style={{ 
-      background: 'linear-gradient(to bottom right, #f0dae3, #e8f0e1, #f0dae3)',
+      background: 'linear-gradient(to bottom right, #f0dae3, #f5e6ec, #f0dae3)',
       fontFamily: '"EB Garamond", serif'
     }}>
       {/* Header */}
