@@ -7,11 +7,11 @@ export interface Book {
   genres: string[]; // Changed from genre: string to genres: string[]
   coverImage?: string;
   ratings: {
-    characters: number;
-    worldBuilding: number;
-    plot: number;
-    writingStyle: number;
-    enjoyment: number;
+    characters: number | null; // Updated to support N/A
+    worldBuilding: number | null; // Updated to support N/A
+    plot: number | null; // Updated to support N/A
+    writingStyle: number | null; // Updated to support N/A
+    enjoyment: number | null; // Updated to support N/A
   };
   overallRating: number;
   dateadded: string; // Changed from dateAdded to match database column
