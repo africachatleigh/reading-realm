@@ -236,7 +236,7 @@ export async function addBook(book: Book): Promise<void> {
 }
 
 // Update an existing book in Supabase
-export async function updateBook(book: Book): Promise<void> {
+export async function updateBook(book: Book): Promise<Book> {
   try {
     if (!supabaseUrl || !supabaseAnonKey) {
       throw new Error('Supabase not configured. Please add environment variables.');
@@ -273,10 +273,17 @@ export async function updateBook(book: Book): Promise<void> {
         // Keep existing image if upload fails
         coverImageUrl = currentBook.coverimage;
       }
+    } else if (book.coverImage === '') {
+      // Empty string means remove image
+      if (currentBook.coverimage) {
+        await deleteBookCover(currentBook.coverimage);
+      }
+      coverImageUrl = null;
     } else if (book.coverImage && !book.coverImage.startsWith('data:')) {
       // Already a URL - use as is
       coverImageUrl = book.coverImage;
     }
+    // If book.coverImage is undefined, keep existing image (coverImageUrl already set)
     
     // Ensure all fields are properly formatted for update
     const bookToUpdate = {
@@ -307,6 +314,12 @@ export async function updateBook(book: Book): Promise<void> {
     }
     
     console.log('Successfully updated book:', book.title);
+    
+    // Return the updated book with the final coverImage URL
+    return {
+      ...book,
+      coverImage: coverImageUrl || ''
+    };
   } catch (error) {
     console.error('Failed to update book:', error);
     throw error;
