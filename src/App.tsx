@@ -260,7 +260,7 @@ function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div className="flex items-center space-x-3">
-              <div className="p-2 rounded-lg shadow-md" style={{ background: 'linear-gradient(to bottom right, #d681a3, #5d8a47)' }}>
+              <div className="p-2 rounded-lg shadow-md" style={{ background: 'linear-gradient(to bottom right, #d681a3, #bf7191)' }}>
                 <BookOpen className="w-8 h-8 text-white" />
               </div>
               <div>
