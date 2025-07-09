@@ -190,10 +190,23 @@ function App() {
     saveAuthors(updatedAuthors);
   };
 
+  // Calculate filtered books for stats
+  const filteredBooks = useMemo(() => {
+    return books.filter(book => {
+      const matchesSearch = book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           book.author.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesGenre = !genreFilter || (book.genres || []).includes(genreFilter);
+      const matchesYear = !yearFilter || book.completionYear.toString() === yearFilter;
+      const matchesWhichWitch = !whichWitchFilter || book.whichWitch === whichWitchFilter;
+
+      return matchesSearch && matchesGenre && matchesYear && matchesWhichWitch;
+    });
+  }, [books, searchTerm, genreFilter, yearFilter, whichWitchFilter]);
+
   const getStats = () => {
-    const totalBooks = books.length;
+    const totalBooks = filteredBooks.length;
     const currentYear = new Date().getFullYear();
-    const booksThisYear = books.filter(book => book.completionYear === currentYear).length;
+    const booksThisYear = filteredBooks.filter(book => book.completionYear === currentYear).length;
 
     return { totalBooks, booksThisYear };
   };
@@ -272,7 +285,9 @@ function App() {
                   <BookOpen className="w-5 h-5" style={{ color: '#77a361' }} />
                 </div>
                 <div className="ml-3">
-                  <p className="text-xs font-medium text-gray-600">Total Books</p>
+                  <p className="text-xs font-medium text-gray-600">
+                    {searchTerm || genreFilter || yearFilter || whichWitchFilter ? 'Filtered Books' : 'Total Books'}
+                  </p>
                   <p className="text-xl font-bold text-gray-900">{stats.totalBooks}</p>
                 </div>
               </div>
@@ -284,7 +299,9 @@ function App() {
                   <BarChart3 className="w-5 h-5" style={{ color: '#77a361' }} />
                 </div>
                 <div className="ml-3">
-                  <p className="text-xs font-medium text-gray-600">This Year</p>
+                  <p className="text-xs font-medium text-gray-600">
+                    {searchTerm || genreFilter || yearFilter || whichWitchFilter ? 'Filtered This Year' : 'This Year'}
+                  </p>
                   <p className="text-xl font-bold text-gray-900">{stats.booksThisYear}</p>
                 </div>
               </div>
