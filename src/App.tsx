@@ -239,7 +239,7 @@ function App() {
   if (isLoading) {
     return (
       <div className="min-h-screen font-serif flex items-center justify-center" style={{ 
-        background: 'linear-gradient(to bottom right, #d681a3, #f5d3e0)',
+        background: 'linear-gradient(to bottom right, #f0dae3, #d681a3, #f5d3e0)',
         fontFamily: '"EB Garamond", serif'
       }}>
         <div className="text-center">
