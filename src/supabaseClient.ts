@@ -329,10 +329,17 @@ export async function updateBook(book: Book): Promise<Book> {
     
     console.log('Successfully updated book:', book.title);
     
-    // Return the updated book with the final coverImage URL
+    // Return the updated book with the final coverImage URL and proper property mapping
     return {
       ...book,
-      coverImage: coverImageUrl || ''
+      coverImage: coverImageUrl || '',
+      completionMonth: book.completionMonth,
+      completionYear: book.completionYear,
+      isStandalone: book.isStandalone,
+      seriesName: book.seriesName,
+      whichWitch: book.whichWitch,
+      overallRating: book.overallRating,
+      dateAdded: book.dateAdded
     };
   } catch (error) {
     console.error('Failed to update book:', error);
