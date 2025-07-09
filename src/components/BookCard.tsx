@@ -28,9 +28,9 @@ const BookCard: React.FC<BookCardProps> = ({ book, onEdit }) => {
       <div className="flex h-full">
         {/* Book Cover - Full Height */}
         <div className="flex-shrink-0">
-          {book.coverImage ? (
+          {book.coverimage ? (
             <img
-              src={book.coverImage}
+              src={book.coverimage}
               alt={`${book.title} cover`}
               className="w-32 h-full object-cover rounded-l-xl"
             />
@@ -114,7 +114,7 @@ const BookCard: React.FC<BookCardProps> = ({ book, onEdit }) => {
           </div>
 
           <div className="pt-2">
-            <StarRating rating={convertToStarRating(book.overallRating)} size="sm" />
+            <StarRating rating={convertToStarRating(book.overallrating)} size="sm" />
           </div>
         </div>
 
