@@ -224,7 +224,7 @@ const BookList: React.FC<BookListProps> = ({
                     ? 'text-white' 
                     : 'text-gray-400 hover:text-gray-600'
                 }`}
-                style={viewMode === 'grid' ? { backgroundColor: '#d0dfc8', color: '#77a361' } : {}}
+                style={viewMode === 'grid' ? { backgroundColor: '#f0dae3', color: '#77a361' } : {}}
               >
                 <Grid className="w-5 h-5" />
               </button>
@@ -235,7 +235,7 @@ const BookList: React.FC<BookListProps> = ({
                     ? 'text-white' 
                     : 'text-gray-400 hover:text-gray-600'
                 }`}
-                style={viewMode === 'table' ? { backgroundColor: '#d0dfc8', color: '#77a361' } : {}}
+                style={viewMode === 'table' ? { backgroundColor: '#f0dae3', color: '#77a361' } : {}}
               >
                 <List className="w-5 h-5" />
               </button>
@@ -269,7 +269,7 @@ const BookList: React.FC<BookListProps> = ({
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead style={{ backgroundColor: '#d0dfc8' }}>
+              <thead style={{ backgroundColor: '#f0dae3' }}>
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                     Book
@@ -367,7 +367,7 @@ const BookList: React.FC<BookListProps> = ({
                         {(book.genres || []).length > 2 && (
                           <span 
                             className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full"
-                            style={{ backgroundColor: '#d0dfc8', color: '#77a361' }}
+                            style={{ backgroundColor: '#f0dae3', color: '#77a361' }}
                           >
                             +{(book.genres || []).length - 2}
                           </span>
@@ -385,7 +385,7 @@ const BookList: React.FC<BookListProps> = ({
                       ) : (
                         <span 
                           className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full"
-                          style={{ backgroundColor: '#d0dfc8', color: '#77a361' }}
+                          style={{ backgroundColor: '#f0dae3', color: '#77a361' }}
                         >
                           {book.seriesName || 'Series'}
                         </span>
