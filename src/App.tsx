@@ -24,6 +24,15 @@ function App() {
   const [editingBook, setEditingBook] = useState<BookType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [supabaseConnected, setSupabaseConnected] = useState<boolean | null>(null);
+  
+  // Shared filter state
+  const [searchTerm, setSearchTerm] = useState('');
+  const [genreFilter, setGenreFilter] = useState('');
+  const [yearFilter, setYearFilter] = useState('');
+  const [whichWitchFilter, setWhichWitchFilter] = useState('');
+  const [sortField, setSortField] = useState<'title' | 'author' | 'date' | 'rating' | 'genre'>('date');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+  const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
 
   useEffect(() => {
     const initializeApp = async () => {
@@ -67,85 +76,85 @@ function App() {
     setAuthors(loadAuthors());
   }, []);
   
-const handleEditBook = async (bookData: Omit<BookType, 'overallRating'>) => {
-  if (!supabaseConnected) {
-    alert('Please connect Supabase first by clicking the "Connect to Supabase" button in the top right.');
-    return;
-  }
+  const handleEditBook = async (bookData: Omit<BookType, 'overallRating'>) => {
+    if (!supabaseConnected) {
+      alert('Please connect Supabase first by clicking the "Connect to Supabase" button in the top right.');
+      return;
+    }
 
-  // Find the original book to preserve existing data
-  const originalBook = books.find(book => book.id === bookData.id);
-  if (!originalBook) {
-    console.error('Original book not found');
-    return;
-  }
+    // Find the original book to preserve existing data
+    const originalBook = books.find(book => book.id === bookData.id);
+    if (!originalBook) {
+      console.error('Original book not found');
+      return;
+    }
 
-  // Create the book data to send to database
-  const bookToUpdate: BookType = {
-    ...originalBook, // Start with all original data
-    ...bookData, // Override with form data
-    // Preserve the existing coverImage if no new image was provided
-    coverImage: bookData.coverImage !== undefined ? bookData.coverImage : originalBook.coverImage,
-    overallRating: calculateOverallRating(bookData.ratings),
+    // Create the book data to send to database
+    const bookToUpdate: BookType = {
+      ...originalBook, // Start with all original data
+      ...bookData, // Override with form data
+      // Preserve the existing coverImage if no new image was provided
+      coverImage: bookData.coverImage !== undefined ? bookData.coverImage : originalBook.coverImage,
+      overallRating: calculateOverallRating(bookData.ratings),
+    };
+
+    // Store original books for potential revert
+    const originalBooks = books;
+
+    try {
+      // The updateBook function now returns the updated book with the final image URL
+      const finalUpdatedBook = await updateBook(bookToUpdate);
+      
+      // Update the UI with the final book data (with correct image URL)
+      setBooks(prev => prev.map(book =>
+        book.id === finalUpdatedBook.id ? finalUpdatedBook : book
+      ));
+      
+      setEditingBook(null);
+      console.log('Book updated successfully in Supabase');
+    } catch (error) {
+      console.error('Failed to update book:', error);
+      // Revert to original books on error
+      setBooks(originalBooks);
+      alert('Failed to update book. Please check your Supabase connection and try again.');
+    }
   };
 
-  // Store original books for potential revert
-  const originalBooks = books;
+  const handleAddBook = async (bookData: Omit<BookType, 'id' | 'overallRating' | 'dateadded'>) => {
+    if (!supabaseConnected) {
+      alert('Please connect Supabase first by clicking the "Connect to Supabase" button in the top right.');
+      return;
+    }
 
-  try {
-    // The updateBook function now returns the updated book with the final image URL
-    const finalUpdatedBook = await updateBook(bookToUpdate);
-    
-    // Update the UI with the final book data (with correct image URL)
-    setBooks(prev => prev.map(book =>
-      book.id === finalUpdatedBook.id ? finalUpdatedBook : book
-    ));
-    
-    setEditingBook(null);
-    console.log('Book updated successfully in Supabase');
-  } catch (error) {
-    console.error('Failed to update book:', error);
-    // Revert to original books on error
-    setBooks(originalBooks);
-    alert('Failed to update book. Please check your Supabase connection and try again.');
-  }
-};
+    console.log('Adding book with data:', bookData);
 
- const handleAddBook = async (bookData: Omit<BookType, 'id' | 'overallRating' | 'dateadded'>) => {
-  if (!supabaseConnected) {
-    alert('Please connect Supabase first by clicking the "Connect to Supabase" button in the top right.');
-    return;
-  }
+    const newBook: BookType = {
+      ...bookData,
+      id: Date.now().toString(),
+      overallRating: calculateOverallRating(bookData.ratings),
+      dateadded: new Date().toISOString(),
+    };
 
-  console.log('Adding book with data:', bookData);
+    console.log('New book object:', newBook);
 
-  const newBook: BookType = {
-    ...bookData,
-    id: Date.now().toString(),
-    overallRating: calculateOverallRating(bookData.ratings),
-    dateadded: new Date().toISOString(),
+    // Optimistic UI update
+    setBooks(prev => [newBook, ...prev]);
+
+    try {
+      await addBook(newBook);
+      console.log('Book saved successfully to Supabase');
+      
+      // Verify the book was actually saved by refetching
+      const updatedBooks = await fetchBooks();
+      setBooks(updatedBooks);
+      console.log('Books refetched after add:', updatedBooks.length);
+    } catch (error) {
+      console.error('Failed to save book to Supabase:', error);
+      // Revert optimistic update on error
+      setBooks(prev => prev.filter(book => book.id !== newBook.id));
+      alert('Failed to save book. Please check your Supabase connection and try again.');
+    }
   };
-
-  console.log('New book object:', newBook);
-
-  // Optimistic UI update
-  setBooks(prev => [newBook, ...prev]);
-
-  try {
-    await addBook(newBook);
-    console.log('Book saved successfully to Supabase');
-    
-    // Verify the book was actually saved by refetching
-    const updatedBooks = await fetchBooks();
-    setBooks(updatedBooks);
-    console.log('Books refetched after add:', updatedBooks.length);
-  } catch (error) {
-    console.error('Failed to save book to Supabase:', error);
-    // Revert optimistic update on error
-    setBooks(prev => prev.filter(book => book.id !== newBook.id));
-    alert('Failed to save book. Please check your Supabase connection and try again.');
-  }
-};
   
   const handleAddGenre = (genreName: string) => {
     const newGenre: Genre = {
@@ -289,6 +298,21 @@ const handleEditBook = async (bookData: Omit<BookType, 'overallRating'>) => {
               genres={genres} 
               onEditBook={setEditingBook}
               showFiltersOnly={true}
+              // Pass filter state and setters
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              genreFilter={genreFilter}
+              setGenreFilter={setGenreFilter}
+              yearFilter={yearFilter}
+              setYearFilter={setYearFilter}
+              whichWitchFilter={whichWitchFilter}
+              setWhichWitchFilter={setWhichWitchFilter}
+              sortField={sortField}
+              setSortField={setSortField}
+              sortDirection={sortDirection}
+              setSortDirection={setSortDirection}
+              viewMode={viewMode}
+              setViewMode={setViewMode}
             />
           </div>
         </div>
@@ -299,6 +323,21 @@ const handleEditBook = async (bookData: Omit<BookType, 'overallRating'>) => {
           genres={genres} 
           onEditBook={setEditingBook}
           showFiltersOnly={false}
+          // Pass the same filter state
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          genreFilter={genreFilter}
+          setGenreFilter={setGenreFilter}
+          yearFilter={yearFilter}
+          setYearFilter={setYearFilter}
+          whichWitchFilter={whichWitchFilter}
+          setWhichWitchFilter={setWhichWitchFilter}
+          sortField={sortField}
+          setSortField={setSortField}
+          sortDirection={sortDirection}
+          setSortDirection={setSortDirection}
+          viewMode={viewMode}
+          setViewMode={setViewMode}
         />
 
         {/* Book Form Modal */}
