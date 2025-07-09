@@ -162,7 +162,21 @@ export async function fetchBooks(): Promise<Book[]> {
     }
     
     console.log('Successfully fetched books:', data?.length || 0);
-    return data as Book[] || [];
+    
+    // Map database column names to expected property names
+    const mappedBooks = data?.map(book => ({
+      ...book,
+      completionMonth: book.completionmonth,
+      completionYear: book.completionyear,
+      coverImage: book.coverimage,
+      isStandalone: book.isstandalone,
+      seriesName: book.seriesname,
+      whichWitch: book.whichwitch,
+      overallRating: book.overallrating,
+      dateAdded: book.dateadded
+    })) || [];
+    
+    return mappedBooks as Book[];
   } catch (error) {
     console.error('Failed to fetch books:', error);
     throw error;
