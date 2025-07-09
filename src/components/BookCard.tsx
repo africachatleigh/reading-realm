@@ -124,23 +124,33 @@ const BookCard: React.FC<BookCardProps> = ({ book, onEdit }) => {
           <div className="space-y-1.5 text-xs text-gray-600 flex-1">
             <div className="flex justify-between">
               <span>Char:</span>
-              <span className="font-semibold text-gray-900">{book.ratings.characters}/10</span>
+              <span className="font-semibold text-gray-900">
+                {book.ratings.characters !== null ? `${book.ratings.characters}/10` : 'N/A'}
+              </span>
             </div>
             <div className="flex justify-between">
               <span>World:</span>
-              <span className="font-semibold text-gray-900">{book.ratings.worldBuilding}/10</span>
+              <span className="font-semibold text-gray-900">
+                {book.ratings.worldBuilding !== null ? `${book.ratings.worldBuilding}/10` : 'N/A'}
+              </span>
             </div>
             <div className="flex justify-between">
               <span>Plot:</span>
-              <span className="font-semibold text-gray-900">{book.ratings.plot}/10</span>
+              <span className="font-semibold text-gray-900">
+                {book.ratings.plot !== null ? `${book.ratings.plot}/10` : 'N/A'}
+              </span>
             </div>
             <div className="flex justify-between">
               <span>Style:</span>
-              <span className="font-semibold text-gray-900">{book.ratings.writingStyle}/10</span>
+              <span className="font-semibold text-gray-900">
+                {book.ratings.writingStyle !== null ? `${book.ratings.writingStyle}/10` : 'N/A'}
+              </span>
             </div>
             <div className="flex justify-between">
               <span>Enjoy:</span>
-              <span className="font-semibold text-gray-900">{book.ratings.enjoyment}/10</span>
+              <span className="font-semibold text-gray-900">
+                {book.ratings.enjoyment !== null ? `${book.ratings.enjoyment}/10` : 'N/A'}
+              </span>
             </div>
           </div>
         </div>
