@@ -120,7 +120,31 @@ function App() {
     }
   };
 
-  const handleAddBook = async (bookData: Omit<BookType, 'id' | 'overallRating' | 'dateadded'>) => {
+  const handleDeleteBook = async (bookId: string) => {
+    if (!supabaseConnected) {
+      alert('Please connect Supabase first.');
+      return;
+    }
+
+    try {
+      // Import deleteBook function
+      const { deleteBook } = await import('./supabaseClient');
+      
+      // Remove from UI first (optimistic update)
+      setBooks(prev => prev.filter(book => book.id !== bookId));
+      
+      // Delete from database
+      await deleteBook(bookId);
+      
+      console.log('Book deleted successfully');
+    } catch (error) {
+      console.error('Failed to delete book:', error);
+      // Restore the book if deletion failed
+      const restoredBooks = await fetchBooks();
+      setBooks(restoredBooks);
+      alert('Failed to delete book. Please try again.');
+    }
+  };
     if (!supabaseConnected) {
       alert('Please connect Supabase first by clicking the "Connect to Supabase" button in the top right.');
       return;
@@ -362,6 +386,7 @@ function App() {
               setShowBookForm(false);
               setEditingBook(null);
             }}
+            onDelete={editingBook ? handleDeleteBook : undefined}
             genres={genres}
             series={series}
             authors={authors}
