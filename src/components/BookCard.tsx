@@ -119,17 +119,17 @@ const BookCard: React.FC<BookCardProps> = ({ book, onEdit }) => {
         </div>
 
         {/* Ratings - Right Column - Hidden on Mobile */}
-        <div className="hidden md:flex w-28 p-3 bg-gray-50 border-l border-gray-100 flex-col">
+        <div className="hidden md:flex w-36 lg:w-40 p-3 bg-gray-50 border-l border-gray-100 flex-col">
           <h4 className="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">Ratings</h4>
           <div className="space-y-1.5 text-xs text-gray-600 flex-1">
             <div className="flex justify-between">
-              <span>Char:</span>
+              <span>Characters:</span>
               <span className="font-semibold text-gray-900">
                 {book.ratings.characters !== null ? `${book.ratings.characters}/10` : 'N/A'}
               </span>
             </div>
             <div className="flex justify-between">
-              <span>World:</span>
+              <span>World Building:</span>
               <span className="font-semibold text-gray-900">
                 {book.ratings.worldBuilding !== null ? `${book.ratings.worldBuilding}/10` : 'N/A'}
               </span>
@@ -141,13 +141,13 @@ const BookCard: React.FC<BookCardProps> = ({ book, onEdit }) => {
               </span>
             </div>
             <div className="flex justify-between">
-              <span>Style:</span>
+              <span>Writing Style:</span>
               <span className="font-semibold text-gray-900">
                 {book.ratings.writingStyle !== null ? `${book.ratings.writingStyle}/10` : 'N/A'}
               </span>
             </div>
             <div className="flex justify-between">
-              <span>Enjoy:</span>
+              <span>Enjoyment:</span>
               <span className="font-semibold text-gray-900">
                 {book.ratings.enjoyment !== null ? `${book.ratings.enjoyment}/10` : 'N/A'}
               </span>
