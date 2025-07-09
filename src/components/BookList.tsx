@@ -411,11 +411,11 @@ const BookList: React.FC<BookListProps> = ({
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-500">
                       <div className="space-y-1">
-                        <div>Characters: {book.ratings.characters}/10</div>
-                        <div>World: {book.ratings.worldBuilding}/10</div>
-                        <div>Plot: {book.ratings.plot}/10</div>
-                        <div>Style: {book.ratings.writingStyle}/10</div>
-                        <div>Enjoyment: {book.ratings.enjoyment}/10</div>
+                        <div>Characters: {book.ratings.characters !== null ? `${book.ratings.characters}/10` : 'N/A'}</div>
+                        <div>World: {book.ratings.worldBuilding !== null ? `${book.ratings.worldBuilding}/10` : 'N/A'}</div>
+                        <div>Plot: {book.ratings.plot !== null ? `${book.ratings.plot}/10` : 'N/A'}</div>
+                        <div>Style: {book.ratings.writingStyle !== null ? `${book.ratings.writingStyle}/10` : 'N/A'}</div>
+                        <div>Enjoyment: {book.ratings.enjoyment !== null ? `${book.ratings.enjoyment}/10` : 'N/A'}</div>
                       </div>
                     </td>
                   </tr>
