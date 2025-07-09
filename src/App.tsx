@@ -73,6 +73,8 @@ function App() {
       return;
     }
 
+    console.log('Adding book with data:', bookData);
+
     const newBook: BookType = {
       ...bookData,
       id: Date.now().toString(),
@@ -80,12 +82,19 @@ function App() {
       dateadded: new Date().toISOString(),
     };
 
+    console.log('New book object:', newBook);
+
     // Optimistic UI update
     setBooks(prev => [newBook, ...prev]);
 
     try {
       await addBook(newBook);
       console.log('Book saved successfully to Supabase');
+      
+      // Verify the book was actually saved by refetching
+      const updatedBooks = await fetchBooks();
+      setBooks(updatedBooks);
+      console.log('Books refetched after add:', updatedBooks.length);
     } catch (error) {
       console.error('Failed to save book to Supabase:', error);
       // Revert optimistic update on error

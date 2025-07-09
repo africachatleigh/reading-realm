@@ -92,7 +92,7 @@ export async function addBook(book: Book): Promise<void> {
       dateadded: book.dateadded,
       isstandalone: book.isStandalone,
       seriesname: book.seriesName || null,
-      whichwitch: book.whichWitch
+      whichwitch: book.whichWitch || null
     };
 
     console.log('Book data being inserted:', bookToInsert);
@@ -138,7 +138,7 @@ export async function updateBook(book: Book): Promise<void> {
       dateadded: book.dateadded,
       isstandalone: book.isStandalone,
       seriesname: book.seriesName || null,
-      whichwitch: book.whichWitch
+      whichwitch: book.whichWitch || null
     };
 
     const { error } = await supabase
