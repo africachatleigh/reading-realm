@@ -5,6 +5,13 @@ import { Book } from './types/Book';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
+// Debug environment variables
+console.log('Supabase Configuration:', {
+  url: supabaseUrl || 'MISSING',
+  hasKey: !!supabaseAnonKey,
+  environment: import.meta.env.MODE
+});
+
 if (!supabaseUrl || !supabaseAnonKey) {
   console.error('Missing Supabase environment variables. Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your environment variables.');
 }
