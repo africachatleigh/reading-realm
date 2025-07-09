@@ -1,5 +1,5 @@
 import { addBook, updateBook, fetchBooks, testConnection } from './supabaseClient';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Plus, BarChart3, BookOpen, AlertCircle } from 'lucide-react';
 import { Book as BookType, Genre, Series, Author } from './types/Book';
 import { 
