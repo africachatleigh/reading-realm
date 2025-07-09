@@ -67,12 +67,22 @@ export const saveAuthors = (authors: Author[]): void => {
   localStorage.setItem(AUTHORS_KEY, JSON.stringify(authors));
 };
 
+// FIXED: Calculate overall rating excluding N/A ratings
 export const calculateOverallRating = (ratings: Book['ratings']): number => {
-  const total = ratings.characters + ratings.worldBuilding + ratings.plot + 
-                ratings.writingStyle + ratings.enjoyment;
-  return Math.round((total / 5) * 10) / 10; // Average out of 10, rounded to 1 decimal
+  // Filter out null values (N/A ratings)
+  const validRatings = Object.values(ratings).filter((rating): rating is number => rating !== null);
+  
+  if (validRatings.length === 0) {
+    return 0; // Return 0 if all ratings are N/A
+  }
+  
+  const total = validRatings.reduce((sum, rating) => sum + rating, 0);
+  const average = total / validRatings.length;
+  
+  return Math.round(average * 10) / 10; // Round to 1 decimal place
 };
 
+// FIXED: Convert 10-point scale to 5-star scale  
 export const convertToStarRating = (rating: number): number => {
-  return Math.round((rating / 2) * 10) / 10; // Convert 0-10 to 0-5 star scale
+  return Math.round((rating / 10) * 5 * 10) / 10; // Convert 0-10 to 0-5 star scale, rounded to 1 decimal
 };
