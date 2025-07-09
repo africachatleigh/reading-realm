@@ -142,6 +142,8 @@ function App() {
       alert('Failed to delete book. Please try again.');
     }
   };
+
+  const handleAddBook = async (bookData: Omit<BookType, 'id' | 'overallRating' | 'dateadded'>) => {
     if (!supabaseConnected) {
       alert('Please connect Supabase first by clicking the "Connect to Supabase" button in the top right.');
       return;
