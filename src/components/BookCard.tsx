@@ -75,7 +75,7 @@ const BookCard: React.FC<BookCardProps> = ({ book, onEdit }) => {
                     </span>
                   ))}
                   {(book.genres || []).length > 2 && (
-                    <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: '#d0dfc8', color: '#77a361' }}>
+                    <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: '#f0dae3', color: '#77a361' }}>
                       +{(book.genres || []).length - 2}
                     </span>
                   )}
