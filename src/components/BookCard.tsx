@@ -16,7 +16,7 @@ const BookCard: React.FC<BookCardProps> = ({ book, onEdit }) => {
   ];
 
   return (
-    <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden group relative h-48">
+    <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden group relative min-h-48 md:h-48">
       {/* Edit Button */}
       <button
         onClick={() => onEdit(book)}
@@ -42,8 +42,9 @@ const BookCard: React.FC<BookCardProps> = ({ book, onEdit }) => {
         </div>
 
         {/* Book Details - Left Column */}
-        <div className="flex-1 p-4 flex flex-col justify-between min-w-0">
-          <div className="space-y-2">
+        <div className="flex-1 p-4 flex flex-col min-w-0">
+          {/* Main content area - takes up available space */}
+          <div className="flex-1 space-y-2 flex flex-col justify-center min-h-0">
             <div>
               <h3 className="font-bold text-gray-900 text-base leading-tight mb-1">
                 {book.title}
@@ -113,7 +114,8 @@ const BookCard: React.FC<BookCardProps> = ({ book, onEdit }) => {
             </div>
           </div>
 
-          <div className="pt-2">
+          {/* Star rating - fixed at bottom with proper spacing */}
+          <div className="pt-2 mt-auto">
             <StarRating rating={convertToStarRating(book.overallrating)} size="sm" />
           </div>
         </div>
