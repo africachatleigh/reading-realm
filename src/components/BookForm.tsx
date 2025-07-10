@@ -4,6 +4,7 @@ import { Book, Genre, Series, Author } from '../types/Book';
 import { calculateOverallRating, convertToStarRating } from '../utils/storage';
 import RatingInput from './RatingInput';
 import StarRating from './StarRating';
+import SearchableDropdown from './SearchableDropdown';
 
 interface BookFormProps {
   book?: Book | null;
@@ -284,73 +285,56 @@ const BookForm: React.FC<BookFormProps> = ({
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Author *</label>
-              <div className="space-y-2">
-                <select
-                  required
-                  value={formData.author}
-                  onChange={(e) => setFormData(prev => ({ ...prev, author: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
-                  style={{ 
-                    '--tw-ring-color': '#d681a3',
-                    focusRingColor: '#d681a3'
-                  }}
-                  onFocus={(e) => e.target.style.borderColor = '#d681a3'}
-                  onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
-                >
-                  <option value="">Select an author</option>
-                  {authors.map(author => (
-                    <option key={author.id} value={author.name}>{author.name}</option>
-                  ))}
-                </select>
+              <div>
+  <label className="block text-sm font-medium text-gray-700 mb-1">Author *</label>
+  <div className="space-y-2">
+    <SearchableDropdown
+      options={authors}
+      value={formData.author}
+      onChange={(value) => setFormData(prev => ({ ...prev, author: value }))}
+      placeholder="Select an author"
+      onAddNew={() => setShowAddAuthor(true)}
+      addNewText="Add new author"
+      color="#d681a3"
+      required={true}
+    />
+    {showAddAuthor && (
+      <div className="flex space-x-2">
+        <input
+          type="text"
+          value={newAuthor}
+          onChange={(e) => setNewAuthor(e.target.value)}
+          placeholder="Enter author name"
+          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+          style={{ '--tw-ring-color': '#d681a3' }}
+          onFocus={(e) => e.target.style.borderColor = '#d681a3'}
+          onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
+        />
+        <button
+          type="button"
+          onClick={handleAddAuthor}
+          className="px-4 py-2 text-white rounded-lg transition-colors"
+          style={{ backgroundColor: '#d681a3' }}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#c166a0'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#d681a3'}
+        >
+          Add
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setShowAddAuthor(false);
+            setNewAuthor('');
+          }}
+          className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors"
+        >
+          Cancel
+        </button>
+      </div>
+    )}
+  </div>
+</div>
 
-                {!showAddAuthor ? (
-                  <button
-                    type="button"
-                    onClick={() => setShowAddAuthor(true)}
-                    className="flex items-center space-x-1 hover:text-green-700 text-sm"
-                    style={{ color: '#d681a3' }}
-                  >
-                    <Plus className="w-4 h-4" />
-                    <span>Add new author</span>
-                  </button>
-                ) : (
-                  <div className="flex space-x-2">
-                    <input
-                      type="text"
-                      value={newAuthor}
-                      onChange={(e) => setNewAuthor(e.target.value)}
-                      placeholder="Enter author name"
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
-                      style={{ 
-                        '--tw-ring-color': '#d681a3',
-                        focusRingColor: '#d681a3'
-                      }}
-                      onFocus={(e) => e.target.style.borderColor = '#d681a3'}
-                      onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
-                    />
-                    <button
-                      type="button"
-                      onClick={handleAddAuthor}
-                      className="px-4 py-2 text-white rounded-lg transition-colors"
-                      style={{ backgroundColor: '#d681a3' }}
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#c166a0'}
-                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#d681a3'}
-                    >
-                      Add
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowAddAuthor(false);
-                        setNewAuthor('');
-                      }}
-                      className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                )}
-              </div>
             </div>
           </div>
 
