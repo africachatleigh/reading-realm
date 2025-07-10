@@ -579,6 +579,32 @@ export async function addGenre(name: string): Promise<Genre> {
   }
 }
 
+// Delete a genre from Supabase
+export async function deleteGenre(id: string): Promise<void> {
+  try {
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('Supabase not configured. Please add environment variables.');
+    }
+
+    console.log('Deleting genre from Supabase:', id);
+    
+    const { error } = await supabase
+      .from('genres')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error deleting genre:', error);
+      throw error;
+    }
+    
+    console.log('Successfully deleted genre:', id);
+  } catch (error) {
+    console.error('Failed to delete genre:', error);
+    throw error;
+  }
+}
+
 // ==================== SERIES ====================
 
 // Fetch all series from Supabase
@@ -644,6 +670,32 @@ export async function addSeries(name: string): Promise<Series> {
   }
 }
 
+// Delete a series from Supabase
+export async function deleteSeries(id: string): Promise<void> {
+  try {
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('Supabase not configured. Please add environment variables.');
+    }
+
+    console.log('Deleting series from Supabase:', id);
+    
+    const { error } = await supabase
+      .from('series')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error deleting series:', error);
+      throw error;
+    }
+    
+    console.log('Successfully deleted series:', id);
+  } catch (error) {
+    console.error('Failed to delete series:', error);
+    throw error;
+  }
+}
+
 // ==================== AUTHORS ====================
 
 // Fetch all authors from Supabase
@@ -705,6 +757,32 @@ export async function addAuthor(name: string): Promise<Author> {
     };
   } catch (error) {
     console.error('Failed to add author:', error);
+    throw error;
+  }
+}
+
+// Delete an author from Supabase
+export async function deleteAuthor(id: string): Promise<void> {
+  try {
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('Supabase not configured. Please add environment variables.');
+    }
+
+    console.log('Deleting author from Supabase:', id);
+    
+    const { error } = await supabase
+      .from('authors')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error deleting author:', error);
+      throw error;
+    }
+    
+    console.log('Successfully deleted author:', id);
+  } catch (error) {
+    console.error('Failed to delete author:', error);
     throw error;
   }
 }
