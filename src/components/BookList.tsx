@@ -221,7 +221,13 @@ const BookList: React.FC<BookListProps> = ({
 
           <div className="flex items-center justify-between">
             <div className="text-sm text-gray-600">
-              Showing {books.length} of {totalCount} books
+              {searchTerm || genreFilter || yearFilter || whichWitchFilter ? (
+                // When filters are applied, show filtered results vs total
+                `Showing ${books.length}${hasMore ? '+' : ''} of ${totalCount} filtered results`
+              ) : (
+                // When no filters, show loaded vs total
+                `Showing ${books.length} of ${totalCount} books`
+              )}
             </div>
             <div className="flex items-center space-x-2">
               <button
