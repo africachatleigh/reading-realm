@@ -31,10 +31,6 @@ export const defaultGenres: Genre[] = [
 
 export const defaultAuthors: Author[] = [
   { id: '1', name: 'Sarah J. Maas' },
-  { id: '2', name: 'Brandon Sanderson' },
-  { id: '3', name: 'Rebecca Yarros' },
-  { id: '4', name: 'Colleen Hoover' },
-  { id: '5', name: 'J.K. Rowling' },
 ];
 
 // GENRES (localStorage)
