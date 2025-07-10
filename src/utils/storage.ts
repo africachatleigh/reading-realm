@@ -27,7 +27,6 @@ export const defaultGenres: Genre[] = [
   { id: '20', name: 'Magical Realism', isCustom: false },
   { id: '21', name: 'Thriller/Mystery', isCustom: false },
   { id: '22', name: 'Non-Fiction', isCustom: false },
-  { id: '15', name: 'Childrens Fiction', isCustom: false },
 ];
 
 export const defaultAuthors: Author[] = [
