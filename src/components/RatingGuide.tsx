@@ -13,28 +13,28 @@ const RatingGuide: React.FC<RatingGuideProps> = ({ category, isOpen, onClose }) 
   const getRatingDescriptions = (category: string) => {
     const descriptions: Record<string, Record<number, string>> = {
       'Characters': {
-        1: 'Extremely poor character development, unrealistic or annoying characters',
-        2: 'Poor character development, mostly flat or stereotypical characters',
-        3: 'Below average characters, some development but lacking depth',
-        4: 'Mediocre characters, basic development with some interesting moments',
-        5: 'Average characters, decent development but nothing exceptional',
-        6: 'Good characters, solid development with some memorable traits',
-        7: 'Very good characters, well-developed with clear motivations',
-        8: 'Excellent characters, complex and engaging with strong arcs',
-        9: 'Outstanding characters, deeply developed and emotionally resonant',
-        10: 'Perfect characters, unforgettable and masterfully crafted'
+        1: 'Hate them so much and never want to see their names again. Fuck them',
+        2: 'Really really disliked the characters, they were crap',
+        3: 'The characters were boring and actively annoying',
+        4: 'I just could not have cared less about these characters',
+        5: 'The characters were mostly very meh, with personalities like cardboard',
+        6: 'The characters were generally fine, but no lasting impression',
+        7: 'The characters were well written and I enjoyed them',
+        8: 'The characters were very interesting with great personalities',
+        9: 'Absolutely incredible and deeply developed characters',
+        10: 'I will think about these characters daily until I die'
       },
       'World Building': {
-        1: 'No world building, confusing or inconsistent setting',
-        2: 'Poor world building, basic setting with many gaps',
-        3: 'Below average world building, some details but lacks cohesion',
-        4: 'Mediocre world building, functional but not particularly engaging',
-        5: 'Average world building, decent setting with adequate detail',
-        6: 'Good world building, well-constructed with interesting elements',
-        7: 'Very good world building, immersive and well-thought-out',
-        8: 'Excellent world building, rich and detailed environment',
-        9: 'Outstanding world building, incredibly immersive and original',
-        10: 'Perfect world building, absolutely captivating and flawless'
+        1: 'Worst world building ever, it was shit',
+        2: 'The world made absolutely no sense, and no planning went into it',
+        3: 'The world system was boring and under developed',
+        4: 'It was functional but I did not care for the world',
+        5: 'The worldbuilding was okay but could have been much better',
+        6: 'Generally good world building, but I may not remember it well',
+        7: 'The world system was interesting and enjoyable to read',
+        8: 'The world system was very extremely constructed, unique and interesting',
+        9: 'The world gripped me like a fishie on a hook, and I adored every page there',
+        10: 'I was totally transported to this brilliant world, and would spend my life studying its lore'
       },
       'Plot': {
         1: 'Terrible plot, incoherent or extremely boring',
