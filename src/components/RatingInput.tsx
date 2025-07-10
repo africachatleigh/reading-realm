@@ -1,5 +1,4 @@
 import React from 'react';
-import { HelpCircle } from 'lucide-react';
 import RatingGuide from './RatingGuide';
 
 interface RatingInputProps {
@@ -22,10 +21,10 @@ const RatingInput: React.FC<RatingInputProps> = ({ label, value, onChange }) => 
           <button
             type="button"
             onClick={() => setShowGuide(true)}
-            className="flex items-center justify-center w-5 h-5 bg-white border border-gray-300 rounded-full hover:bg-gray-50 transition-colors"
+            className="flex items-center justify-center w-5 h-5 bg-gray-300 border border-gray-400 rounded-full hover:bg-gray-400 transition-colors text-white text-xs font-bold"
             title={`Rating guide for ${label}`}
           >
-            <HelpCircle className="w-3 h-3 text-gray-500" />
+            ?
           </button>
         </div>
       
@@ -80,7 +79,6 @@ const RatingInput: React.FC<RatingInputProps> = ({ label, value, onChange }) => 
         </div>
       </div>
       </div>
-
       <RatingGuide
         category={label}
         isOpen={showGuide}
