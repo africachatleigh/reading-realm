@@ -21,7 +21,8 @@ const RatingInput: React.FC<RatingInputProps> = ({ label, value, onChange }) => 
           <button
             type="button"
             onClick={() => setShowGuide(true)}
-            className="flex items-center justify-center w-5 h-5 bg-gray-300 border border-gray-400 rounded-full hover:bg-gray-400 transition-colors text-white text-xs font-bold"
+            className="flex items-center justify-center w-5 h-5 rounded-full border border-gray-400 hover:opacity-80 transition-colors text-gray-600 text-xs font-bold"
+            style={{ backgroundColor: '#f5e6ec' }}
             title={`Rating guide for ${label}`}
           >
             ?
