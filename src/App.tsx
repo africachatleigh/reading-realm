@@ -1,5 +1,13 @@
-import { addBook, updateBook, fetchBooks, testConnection, deleteBook } from './supabaseClient';
-import React, { useState, useEffect, useMemo } from 'react';
+import { 
+  addBook, 
+  updateBook, 
+  fetchBooks, 
+  fetchBooksWithPagination, 
+  testConnection, 
+  deleteBook,
+  type BookFilters 
+} from './supabaseClient';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Plus, BarChart3, BookOpen, AlertCircle } from 'lucide-react';
 import { Book as BookType, Genre, Series, Author } from './types/Book';
 import { 
@@ -23,7 +31,14 @@ function App() {
   const [showBookForm, setShowBookForm] = useState(false);
   const [editingBook, setEditingBook] = useState<BookType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [supabaseConnected, setSupabaseConnected] = useState<boolean | null>(null);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [totalCount, setTotalCount] = useState(0);
+  const [filtersChanged, setFiltersChanged] = useState(false);
   
   // Shared filter state
   const [searchTerm, setSearchTerm] = useState('');
@@ -33,6 +48,64 @@ function App() {
   const [sortField, setSortField] = useState<'title' | 'author' | 'date' | 'rating' | 'genre'>('date');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
+
+  const ITEMS_PER_PAGE = 20;
+
+  // Create filters object
+  const filters: BookFilters = useMemo(() => ({
+    searchTerm: searchTerm || undefined,
+    genreFilter: genreFilter || undefined,
+    yearFilter: yearFilter || undefined,
+    whichWitchFilter: whichWitchFilter || undefined,
+    sortField,
+    sortDirection
+  }), [searchTerm, genreFilter, yearFilter, whichWitchFilter, sortField, sortDirection]);
+
+  // Load books with pagination
+  const loadBooksPage = useCallback(async (page: number = 0, isNewSearch = false) => {
+    if (!supabaseConnected) return;
+    
+    try {
+      if (isNewSearch) {
+        setIsLoading(true);
+      } else {
+        setIsLoadingMore(true);
+      }
+
+      const result = await fetchBooksWithPagination(page, ITEMS_PER_PAGE, filters);
+      
+      if (isNewSearch || page === 0) {
+        setBooks(result.books);
+      } else {
+        setBooks(prev => [...prev, ...result.books]);
+      }
+      
+      setCurrentPage(page);
+      setHasMore(result.hasMore);
+      setTotalCount(result.totalCount);
+      setFiltersChanged(false);
+    } catch (error) {
+      console.error('Failed to load books:', error);
+    } finally {
+      setIsLoading(false);
+      setIsLoadingMore(false);
+    }
+  }, [supabaseConnected, filters]);
+
+  // Load more books for infinite scroll
+  const loadMoreBooks = useCallback(() => {
+    if (!isLoadingMore && hasMore && !filtersChanged) {
+      loadBooksPage(currentPage + 1, false);
+    }
+  }, [isLoadingMore, hasMore, currentPage, filtersChanged, loadBooksPage]);
+
+  // Reset and reload when filters change
+  useEffect(() => {
+    if (supabaseConnected) {
+      setFiltersChanged(true);
+      loadBooksPage(0, true);
+    }
+  }, [filters, supabaseConnected, loadBooksPage]);
 
   useEffect(() => {
     const initializeApp = async () => {
@@ -52,20 +125,18 @@ function App() {
         setSupabaseConnected(isConnected);
         
         if (isConnected) {
-          // If connected, fetch books from Supabase
-          const loadedBooks = await fetchBooks();
-          console.log('Loaded books count:', loadedBooks.length);
-          setBooks(loadedBooks);
+          // Load first page of books
+          await loadBooksPage(0, true);
         } else {
           // If not connected, start with empty array
           console.warn('Supabase not connected, starting with empty book list. Please check your Vercel environment variables.');
           setBooks([]);
+          setIsLoading(false);
         }
       } catch (error) {
         console.error('Failed to initialize app:', error);
         setSupabaseConnected(false);
         setBooks([]);
-      } finally {
         setIsLoading(false);
       }
     };
@@ -129,6 +200,7 @@ function App() {
     try {
       // Remove from UI first (optimistic update)
       setBooks(prev => prev.filter(book => book.id !== bookId));
+      setTotalCount(prev => prev - 1);
       
       // Delete from database
       await deleteBook(bookId);
@@ -136,9 +208,8 @@ function App() {
       console.log('Book deleted successfully');
     } catch (error) {
       console.error('Failed to delete book:', error);
-      // Restore the book if deletion failed
-      const restoredBooks = await fetchBooks();
-      setBooks(restoredBooks);
+      // Restore by reloading current page
+      loadBooksPage(0, true);
       alert('Failed to delete book. Please try again.');
     }
   };
@@ -155,26 +226,19 @@ function App() {
       ...bookData,
       id: Date.now().toString(),
       overallRating: calculateOverallRating(bookData.ratings),
-      dateadded: new Date().toISOString(),
+      dateAdded: new Date().toISOString(),
     };
 
     console.log('New book object:', newBook);
-
-    // Optimistic UI update
-    setBooks(prev => [newBook, ...prev]);
 
     try {
       await addBook(newBook);
       console.log('Book saved successfully to Supabase');
       
-      // Verify the book was actually saved by refetching
-      const updatedBooks = await fetchBooks();
-      setBooks(updatedBooks);
-      console.log('Books refetched after add:', updatedBooks.length);
+      // Reload from beginning to show new book
+      loadBooksPage(0, true);
     } catch (error) {
       console.error('Failed to save book to Supabase:', error);
-      // Revert optimistic update on error
-      setBooks(prev => prev.filter(book => book.id !== newBook.id));
       alert('Failed to save book. Please check your Supabase connection and try again.');
     }
   };
@@ -213,23 +277,14 @@ function App() {
     saveAuthors(updatedAuthors);
   };
 
-  // Calculate filtered books for stats
-  const filteredBooks = useMemo(() => {
-    return books.filter(book => {
-      const matchesSearch = book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           book.author.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesGenre = !genreFilter || (book.genres || []).includes(genreFilter);
-      const matchesYear = !yearFilter || book.completionYear.toString() === yearFilter;
-      const matchesWhichWitch = !whichWitchFilter || book.whichWitch === whichWitchFilter;
-
-      return matchesSearch && matchesGenre && matchesYear && matchesWhichWitch;
-    });
-  }, [books, searchTerm, genreFilter, yearFilter, whichWitchFilter]);
-
   const getStats = () => {
-    const totalBooks = filteredBooks.length;
+    // Use totalCount from pagination for accurate stats
+    const totalBooks = totalCount;
     const currentYear = new Date().getFullYear();
-    const booksThisYear = filteredBooks.filter(book => book.completionYear === currentYear).length;
+    
+    // For "this year" count, we need to make a separate filtered query
+    // For now, estimate based on current loaded books
+    const booksThisYear = books.filter(book => book.completionYear === currentYear).length;
 
     return { totalBooks, booksThisYear };
   };
@@ -334,6 +389,7 @@ function App() {
               genres={genres} 
               onEditBook={setEditingBook}
               showFiltersOnly={true}
+              totalCount={totalCount}
               // Pass filter state and setters
               searchTerm={searchTerm}
               setSearchTerm={setSearchTerm}
@@ -359,6 +415,10 @@ function App() {
           genres={genres} 
           onEditBook={setEditingBook}
           showFiltersOnly={false}
+          totalCount={totalCount}
+          isLoading={isLoadingMore}
+          hasMore={hasMore}
+          onLoadMore={loadMoreBooks}
           // Pass the same filter state
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
