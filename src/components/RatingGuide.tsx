@@ -37,16 +37,16 @@ const RatingGuide: React.FC<RatingGuideProps> = ({ category, isOpen, onClose }) 
         10: 'I was totally transported to this brilliant world, and would spend my life studying its lore'
       },
       'Plot': {
-        1: 'Terrible plot, incoherent or extremely boring',
-        2: 'Poor plot, confusing or unengaging storyline',
-        3: 'Below average plot, some interesting moments but overall weak',
-        4: 'Mediocre plot, functional but predictable or slow',
-        5: 'Average plot, decent story with some engaging elements',
-        6: 'Good plot, well-structured with engaging developments',
-        7: 'Very good plot, compelling with good pacing and twists',
-        8: 'Excellent plot, gripping and well-executed storyline',
-        9: 'Outstanding plot, masterfully crafted and engaging',
-        10: 'Perfect plot, absolutely brilliant and unforgettable'
+        1: 'What the fuck even was that. I have no words',
+        2: 'Truly awful',
+        3: 'I actively didn not like the plot',
+        4: 'I found the plot a bit boring or did not make sense in places',
+        5: 'The plot was meh. Not for me or had some unclear elements',
+        6: 'The plot was decent in places, but the pacing/logic was off at points, or I doubt I will remember it',
+        7: 'The plot was good and compelling to read',
+        8: 'The plot was unique, well executed, and gripping',
+        9: 'The plot was extremely well developed and paced. It will have a lasting impact on me',
+        10: 'This story deserves its own religion. Get it made into a high budget TV show immediately'
       },
       'Writing Style': {
         1: 'Terrible writing, difficult to read or poorly constructed',
