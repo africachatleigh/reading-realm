@@ -18,6 +18,23 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const supabase = createClient(supabaseUrl || '', supabaseAnonKey || '');
 
+// Pagination interface
+export interface PaginatedBooksResult {
+  books: Book[];
+  totalCount: number;
+  hasMore: boolean;
+}
+
+// Filter and sort interface
+export interface BookFilters {
+  searchTerm?: string;
+  genreFilter?: string;
+  yearFilter?: string;
+  whichWitchFilter?: string;
+  sortField?: 'title' | 'author' | 'date' | 'rating' | 'genre';
+  sortDirection?: 'asc' | 'desc';
+}
+
 // Test the connection
 export async function testConnection(): Promise<boolean> {
   try {
@@ -142,7 +159,115 @@ export async function deleteBookCover(imageUrl: string): Promise<void> {
   }
 }
 
-// Fetch all books from Supabase
+// NEW: Fetch books with pagination and filters
+export async function fetchBooksWithPagination(
+  page: number = 0,
+  limit: number = 20,
+  filters: BookFilters = {}
+): Promise<PaginatedBooksResult> {
+  try {
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.warn('Supabase not configured, returning empty result');
+      return { books: [], totalCount: 0, hasMore: false };
+    }
+
+    console.log('Fetching books with pagination:', { page, limit, filters });
+
+    // Build the query
+    let query = supabase.from('books').select('*', { count: 'exact' });
+
+    // Apply filters
+    if (filters.searchTerm) {
+      const searchTerm = filters.searchTerm.toLowerCase();
+      query = query.or(`title.ilike.%${searchTerm}%,author.ilike.%${searchTerm}%,seriesname.ilike.%${searchTerm}%`);
+    }
+
+    if (filters.genreFilter) {
+      query = query.contains('genres', [filters.genreFilter]);
+    }
+
+    if (filters.yearFilter) {
+      query = query.eq('completionyear', parseInt(filters.yearFilter));
+    }
+
+    if (filters.whichWitchFilter) {
+      query = query.eq('whichwitch', filters.whichWitchFilter);
+    }
+
+    // Apply sorting
+    const sortField = filters.sortField || 'date';
+    const sortDirection = filters.sortDirection || 'desc';
+    const ascending = sortDirection === 'asc';
+
+    switch (sortField) {
+      case 'title':
+        query = query.order('title', { ascending });
+        break;
+      case 'author':
+        query = query.order('author', { ascending });
+        break;
+      case 'date':
+        query = query.order('completionyear', { ascending })
+                     .order('completionmonth', { ascending });
+        break;
+      case 'rating':
+        query = query.order('overallrating', { ascending });
+        break;
+      case 'genre':
+        // For genre sorting, we'll need to handle it client-side since it's an array
+        query = query.order('title', { ascending }); // Fallback sort
+        break;
+      default:
+        query = query.order('dateadded', { ascending });
+    }
+
+    // Apply pagination
+    const from = page * limit;
+    const to = from + limit - 1;
+    query = query.range(from, to);
+
+    const { data, error, count } = await query;
+
+    if (error) {
+      console.error('Error fetching books:', error);
+      throw error;
+    }
+
+    console.log('Successfully fetched paginated books:', {
+      page,
+      limit,
+      count: data?.length || 0,
+      totalCount: count || 0
+    });
+
+    // Map database column names to expected property names
+    const mappedBooks = data?.map(book => ({
+      ...book,
+      completionMonth: book.completionmonth,
+      completionYear: book.completionyear,
+      coverImage: book.coverimage,
+      isStandalone: book.isstandalone,
+      seriesName: book.seriesname,
+      whichWitch: book.whichwitch,
+      overallRating: book.overallrating,
+      dateAdded: book.dateadded
+    })) || [];
+
+    const totalCount = count || 0;
+    const hasMore = from + (data?.length || 0) < totalCount;
+
+    return {
+      books: mappedBooks as Book[],
+      totalCount,
+      hasMore
+    };
+  } catch (error) {
+    console.error('Failed to fetch books with pagination:', error);
+    throw error;
+  }
+}
+
+// Keep the original fetchBooks function for backward compatibility
 export async function fetchBooks(): Promise<Book[]> {
   try {
     if (!supabaseUrl || !supabaseAnonKey) {
@@ -150,7 +275,7 @@ export async function fetchBooks(): Promise<Book[]> {
       return [];
     }
 
-    console.log('Fetching books from Supabase...');
+    console.log('Fetching all books from Supabase...');
     const { data, error } = await supabase
       .from('books')
       .select('*')
@@ -221,7 +346,7 @@ export async function addBook(book: Book): Promise<void> {
       coverimage: coverImageUrl,
       ratings: book.ratings,
       overallrating: book.overallRating,
-      dateadded: book.dateadded,
+      dateadded: book.dateAdded,
       isstandalone: book.isStandalone,
       seriesname: book.seriesName || null,
       whichwitch: book.whichWitch || null
@@ -309,7 +434,7 @@ export async function updateBook(book: Book): Promise<Book> {
       coverimage: coverImageUrl,
       ratings: book.ratings,
       overallrating: book.overallRating,
-      dateadded: book.dateadded,
+      dateadded: book.dateAdded,
       isstandalone: book.isStandalone,
       seriesname: book.seriesName || null,
       whichwitch: book.whichWitch || null
