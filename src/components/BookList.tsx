@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { Search, Filter, SortAsc, SortDesc, Grid, List } from 'lucide-react';
+import React, { useMemo, useEffect, useRef } from 'react';
+import { Search, Filter, SortAsc, SortDesc, Grid, List, Loader2 } from 'lucide-react';
 import { Book, Genre } from '../types/Book';
 import { convertToStarRating } from '../utils/storage';
 import BookCard from './BookCard';
@@ -13,6 +13,10 @@ interface BookListProps {
   genres: Genre[];
   onEditBook: (book: Book) => void;
   showFiltersOnly?: boolean;
+  totalCount?: number;
+  isLoading?: boolean;
+  hasMore?: boolean;
+  onLoadMore?: () => void;
   // Filter state props
   searchTerm: string;
   setSearchTerm: (term: string) => void;
@@ -35,6 +39,10 @@ const BookList: React.FC<BookListProps> = ({
   genres, 
   onEditBook, 
   showFiltersOnly = false,
+  totalCount = 0,
+  isLoading = false,
+  hasMore = false,
+  onLoadMore,
   searchTerm,
   setSearchTerm,
   genreFilter,
@@ -50,53 +58,40 @@ const BookList: React.FC<BookListProps> = ({
   viewMode,
   setViewMode
 }) => {
+  // Ref for infinite scroll detection
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  // Set up intersection observer for infinite scroll
+  useEffect(() => {
+    if (!onLoadMore || !hasMore || isLoading) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          onLoadMore();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentRef = loadMoreRef.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, [onLoadMore, hasMore, isLoading]);
+
   const uniqueYears = useMemo(() => {
     const years = Array.from(new Set(books.map(book => book.completionYear))).sort((a, b) => b - a);
     return years;
   }, [books]);
 
   const whichWitchOptions = ['Lou Lou', 'Chlo', 'Affo'];
-
-  const filteredAndSortedBooks = useMemo(() => {
-    let filtered = books.filter(book => {
-      const matchesSearch = book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           book.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           (book.seriesName && book.seriesName.toLowerCase().includes(searchTerm.toLowerCase()));
-      const matchesGenre = !genreFilter || (book.genres || []).includes(genreFilter);
-      const matchesYear = !yearFilter || book.completionYear.toString() === yearFilter;
-      const matchesWhichWitch = !whichWitchFilter || book.whichWitch === whichWitchFilter;
-
-      return matchesSearch && matchesGenre && matchesYear && matchesWhichWitch;
-    });
-
-    // Sort books
-    filtered.sort((a, b) => {
-      let comparison = 0;
-
-      switch (sortField) {
-        case 'title':
-          comparison = a.title.localeCompare(b.title);
-          break;
-        case 'author':
-          comparison = a.author.localeCompare(b.author);
-          break;
-        case 'date':
-          comparison = new Date(a.completionYear, a.completionMonth - 1).getTime() - 
-                      new Date(b.completionYear, b.completionMonth - 1).getTime();
-          break;
-        case 'rating':
-          comparison = a.overallRating - b.overallRating;
-          break;
-        case 'genre':
-          comparison = (a.genres || [])[0]?.localeCompare((b.genres || [])[0] || '') || 0;
-          break;
-      }
-
-      return sortDirection === 'asc' ? comparison : -comparison;
-    });
-
-    return filtered;
-  }, [books, searchTerm, genreFilter, yearFilter, whichWitchFilter, sortField, sortDirection]);
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -215,7 +210,7 @@ const BookList: React.FC<BookListProps> = ({
 
           <div className="flex items-center justify-between">
             <div className="text-sm text-gray-600">
-              Showing {filteredAndSortedBooks.length} of {books.length} books
+              Showing {books.length} of {totalCount} books
             </div>
             <div className="flex items-center space-x-2">
               <button
@@ -247,12 +242,14 @@ const BookList: React.FC<BookListProps> = ({
     );
   }
 
-  if (books.length === 0) {
+  if (books.length === 0 && !isLoading) {
     return (
       <div className="text-center py-12">
         <div className="text-6xl mb-4">📚</div>
-        <h3 className="text-xl font-semibold text-gray-900 mb-2">No books yet</h3>
-        <p className="text-gray-600">Add your first book to get started!</p>
+        <h3 className="text-xl font-semibold text-gray-900 mb-2">No books found</h3>
+        <p className="text-gray-600">
+          {totalCount === 0 ? 'Add your first book to get started!' : 'Try adjusting your search or filter criteria'}
+        </p>
       </div>
     );
   }
@@ -262,7 +259,7 @@ const BookList: React.FC<BookListProps> = ({
       {/* Books Display */}
       {viewMode === 'grid' ? (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {filteredAndSortedBooks.map(book => (
+          {books.map(book => (
             <BookCard key={book.id} book={book} onEdit={onEditBook} />
           ))}
         </div>
@@ -331,7 +328,7 @@ const BookList: React.FC<BookListProps> = ({
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredAndSortedBooks.map(book => (
+                {books.map(book => (
                   <tr key={book.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => onEditBook(book)}>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
@@ -340,6 +337,7 @@ const BookList: React.FC<BookListProps> = ({
                             src={book.coverImage}
                             alt={`${book.title} cover`}
                             className="w-12 h-16 object-cover rounded mr-4"
+                            loading="lazy"
                           />
                         ) : (
                           <div className="w-12 h-16 bg-gray-200 rounded mr-4 flex items-center justify-center">
@@ -427,11 +425,24 @@ const BookList: React.FC<BookListProps> = ({
         </div>
       )}
 
-      {filteredAndSortedBooks.length === 0 && (
-        <div className="text-center py-12">
-          <Filter className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">No books match your filters</h3>
-          <p className="text-gray-600">Try adjusting your search or filter criteria</p>
+      {/* Infinite Scroll Trigger */}
+      {hasMore && (
+        <div ref={loadMoreRef} className="flex justify-center py-8">
+          {isLoading ? (
+            <div className="flex items-center space-x-2 text-gray-500">
+              <Loader2 className="w-5 h-5 animate-spin" />
+              <span>Loading more books...</span>
+            </div>
+          ) : (
+            <div className="text-gray-400 text-sm">Scroll to load more books</div>
+          )}
+        </div>
+      )}
+
+      {/* End of results indicator */}
+      {!hasMore && books.length > 0 && (
+        <div className="text-center py-8 text-gray-500 text-sm">
+          You've reached the end of your book collection!
         </div>
       )}
     </div>
