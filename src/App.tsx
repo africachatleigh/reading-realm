@@ -7,10 +7,13 @@ import {
   deleteBook,
   fetchGenres,
   addGenre,
+  deleteGenre,
   fetchSeries,
   addSeries,
+  deleteSeries,
   fetchAuthors,
   addAuthor,
+  deleteAuthor,
   type BookFilters 
 } from './supabaseClient';
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
@@ -311,7 +314,7 @@ function App() {
 
     try {
       const newGenre = await addGenre(genreName);
-      setGenres(prev => [...prev, newGenre]);
+      setGenres(prev => [...prev, newGenre].sort((a, b) => a.name.localeCompare(b.name)));
       console.log('Genre added successfully:', newGenre.name);
     } catch (error) {
       console.error('Failed to add genre:', error);
@@ -327,7 +330,7 @@ function App() {
 
     try {
       const newSeries = await addSeries(seriesName);
-      setSeries(prev => [...prev, newSeries]);
+      setSeries(prev => [...prev, newSeries].sort((a, b) => a.name.localeCompare(b.name)));
       console.log('Series added successfully:', newSeries.name);
     } catch (error) {
       console.error('Failed to add series:', error);
@@ -343,11 +346,59 @@ function App() {
 
     try {
       const newAuthor = await addAuthor(authorName);
-      setAuthors(prev => [...prev, newAuthor]);
+      setAuthors(prev => [...prev, newAuthor].sort((a, b) => a.name.localeCompare(b.name)));
       console.log('Author added successfully:', newAuthor.name);
     } catch (error) {
       console.error('Failed to add author:', error);
       alert('Failed to add author. Please try again.');
+    }
+  };
+
+  const handleDeleteGenre = async (genreId: string) => {
+    if (!supabaseConnected) {
+      alert('Please connect Supabase first.');
+      return;
+    }
+
+    try {
+      await deleteGenre(genreId);
+      setGenres(prev => prev.filter(genre => genre.id !== genreId));
+      console.log('Genre deleted successfully');
+    } catch (error) {
+      console.error('Failed to delete genre:', error);
+      alert('Failed to delete genre. Please try again.');
+    }
+  };
+
+  const handleDeleteSeries = async (seriesId: string) => {
+    if (!supabaseConnected) {
+      alert('Please connect Supabase first.');
+      return;
+    }
+
+    try {
+      await deleteSeries(seriesId);
+      setSeries(prev => prev.filter(series => series.id !== seriesId));
+      console.log('Series deleted successfully');
+    } catch (error) {
+      console.error('Failed to delete series:', error);
+      alert('Failed to delete series. Please try again.');
+    }
+  };
+
+  const handleDeleteAuthor = async (authorId: string) => {
+    if (!supabaseConnected) {
+      alert('Please connect Supabase first.');
+      return;
+    }
+
+    try {
+      await deleteAuthor(authorId);
+      setAuthors(prev => prev.filter(author => author.id !== authorId));
+      console.log('Author deleted successfully');
+    } catch (error) {
+      console.error('Failed to delete author:', error);
+      alert('Failed to delete author. Please try again.');
     }
   };
 
@@ -526,6 +577,9 @@ function App() {
             onAddGenre={handleAddGenre}
             onAddSeries={handleAddSeries}
             onAddAuthor={handleAddAuthor}
+            onDeleteGenre={handleDeleteGenre}
+            onDeleteSeries={handleDeleteSeries}
+            onDeleteAuthor={handleDeleteAuthor}
           />
         )}
       </div>
