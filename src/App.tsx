@@ -43,6 +43,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [totalCount, setTotalCount] = useState(0);
+  const [totalCollectionCount, setTotalCollectionCount] = useState(0);
   const [filtersChanged, setFiltersChanged] = useState(false);
   
   // Shared filter state
@@ -152,11 +153,12 @@ function App() {
         if (isConnected) {
           // Load first page of books
           await loadBooksPage(0, true);
-          // Load genres, series, authors, and years from database
+          // Load genres, series, authors, years, and total count from database
           await loadGenresFromDB();
           await loadSeriesFromDB();
           await loadAuthorsFromDB();
           await loadAvailableYears();
+          await loadTotalCollectionCount();
         } else {
           // If not connected, start with empty array
           console.warn('Supabase not connected, starting with empty book list. Please check your Vercel environment variables.');
@@ -165,6 +167,7 @@ function App() {
           setSeries([]);
           setAuthors([]);
           setAllAvailableYears([]);
+          setTotalCollectionCount(0);
           setIsLoading(false);
         }
       } catch (error) {
@@ -175,12 +178,24 @@ function App() {
         setSeries([]);
         setAuthors([]);
         setAllAvailableYears([]);
+        setTotalCollectionCount(0);
         setIsLoading(false);
       }
     };
 
     initializeApp();
   }, []);
+
+  // Load total collection count (all books, no filters)
+  const loadTotalCollectionCount = async () => {
+    try {
+      const result = await fetchBooksWithPagination(0, 1, {}); // Just get count, no filters
+      setTotalCollectionCount(result.totalCount);
+    } catch (error) {
+      console.error('Failed to load total collection count:', error);
+      setTotalCollectionCount(0);
+    }
+  };
 
   // Load all available years from database
   const loadAvailableYears = async () => {
@@ -557,6 +572,7 @@ function App() {
               onEditBook={setEditingBook}
               showFiltersOnly={true}
               totalCount={totalCount}
+              totalCollectionCount={totalCollectionCount}
               allAvailableYears={allAvailableYears}
               // Pass filter state and setters
               searchTerm={searchTerm}
@@ -584,6 +600,7 @@ function App() {
           onEditBook={setEditingBook}
           showFiltersOnly={false}
           totalCount={totalCount}
+          totalCollectionCount={totalCollectionCount}
           isLoading={isLoadingMore}
           hasMore={hasMore}
           onLoadMore={loadMoreBooks}
