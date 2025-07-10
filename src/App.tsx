@@ -7,7 +7,7 @@ import {
   deleteBook,
   type BookFilters 
 } from './supabaseClient';
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { Plus, BarChart3, BookOpen, AlertCircle } from 'lucide-react';
 import { Book as BookType, Genre, Series, Author } from './types/Book';
 import { 
@@ -42,6 +42,7 @@ function App() {
   
   // Shared filter state
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [genreFilter, setGenreFilter] = useState('');
   const [yearFilter, setYearFilter] = useState('');
   const [whichWitchFilter, setWhichWitchFilter] = useState('');
@@ -51,15 +52,34 @@ function App() {
 
   const ITEMS_PER_PAGE = 20;
 
+  // Debounce search term
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  
+  useEffect(() => {
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+    }
+    
+    debounceTimeoutRef.current = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 500); // 500ms delay
+    
+    return () => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+    };
+  }, [searchTerm]);
+
   // Create filters object
   const filters: BookFilters = useMemo(() => ({
-    searchTerm: searchTerm || undefined,
+    searchTerm: debouncedSearchTerm || undefined,
     genreFilter: genreFilter || undefined,
     yearFilter: yearFilter || undefined,
     whichWitchFilter: whichWitchFilter || undefined,
     sortField,
     sortDirection
-  }), [searchTerm, genreFilter, yearFilter, whichWitchFilter, sortField, sortDirection]);
+  }), [debouncedSearchTerm, genreFilter, yearFilter, whichWitchFilter, sortField, sortDirection]);
 
   // Load books with pagination
   const loadBooksPage = useCallback(async (page: number = 0, isNewSearch = false) => {
