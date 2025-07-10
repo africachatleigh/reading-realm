@@ -49,28 +49,28 @@ const RatingGuide: React.FC<RatingGuideProps> = ({ category, isOpen, onClose }) 
         10: 'This story deserves its own religion. Get it made into a high budget TV show immediately'
       },
       'Writing Style': {
-        1: 'Terrible writing, difficult to read or poorly constructed',
-        2: 'Poor writing style, awkward prose or frequent errors',
-        3: 'Below average writing, readable but lacks flow or elegance',
-        4: 'Mediocre writing style, functional but not particularly engaging',
-        5: 'Average writing style, clear and readable prose',
-        6: 'Good writing style, well-crafted and engaging prose',
-        7: 'Very good writing style, beautiful and flowing language',
-        8: 'Excellent writing style, masterful use of language',
-        9: 'Outstanding writing style, exceptional and memorable prose',
-        10: 'Perfect writing style, absolutely beautiful and flawless'
+        1: 'Every paragraph felt like pulling my own brain out through my nose with a toothbrush',
+        2: 'I really hated the way this book was written',
+        3: 'The writing was pretty bad',
+        4: 'The writing was difficult to digest and not very well written',
+        5: 'The writing was meh, and could have been better',
+        6: 'The writing was mostly ok, but I would change a couple of things',
+        7: 'The writing was very good and flowed well',
+        8: 'The writing was very enjoyable. I would look to read more by this author',
+        9: 'The writing was truly excellent, this author is an artist',
+        10: 'The writing was the conductor to the pure ecstacy I felt on every page'
       },
       'Enjoyment': {
-        1: 'Hated it, could barely finish reading',
-        2: 'Disliked it strongly, struggled to continue',
-        3: 'Disliked it, not enjoyable but manageable',
-        4: 'Below average enjoyment, some redeeming qualities',
-        5: 'Average enjoyment, okay read but nothing special',
-        6: 'Good enjoyment, liked it and would recommend',
-        7: 'Very enjoyable, really liked it and engaged throughout',
-        8: 'Excellent enjoyment, loved it and couldn\'t put it down',
-        9: 'Outstanding enjoyment, absolutely loved every moment',
-        10: 'Perfect enjoyment, one of the best books ever read'
+        1: 'I would like to pin open my enemies eyes and make him read this book',
+        2: 'I would use this book as toilet paper',
+        3: 'I would use this book to squash a gross bug',
+        4: 'I would warn a friend not to read it if she asked',
+        5: 'It will end up in a charity bag at some point',
+        6: 'Ok but I would not jump to read the sequel',
+        7: 'I enjoyed this and would recommend people if I thought it was their type of book. ',
+        8: 'I finished this book very happy, and will recommend it to most people',
+        9: 'I finished this book emotionally destroyed. I would save this book from a burning house',
+        10: 'Feed this book directly into my veins via IV. Everyone in my life will hear of this'
       }
     };
 
