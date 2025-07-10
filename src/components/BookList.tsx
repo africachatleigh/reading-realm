@@ -17,6 +17,7 @@ interface BookListProps {
   isLoading?: boolean;
   hasMore?: boolean;
   onLoadMore?: () => void;
+  allAvailableYears?: number[];
   // Filter state props
   searchTerm: string;
   setSearchTerm: (term: string) => void;
@@ -43,6 +44,7 @@ const BookList: React.FC<BookListProps> = ({
   isLoading = false,
   hasMore = false,
   onLoadMore,
+  allAvailableYears = [],
   searchTerm,
   setSearchTerm,
   genreFilter,
@@ -85,11 +87,6 @@ const BookList: React.FC<BookListProps> = ({
       }
     };
   }, [onLoadMore, hasMore, isLoading]);
-
-  const uniqueYears = useMemo(() => {
-    const years = Array.from(new Set(books.map(book => book.completionYear))).sort((a, b) => b - a);
-    return years;
-  }, [books]);
 
   const whichWitchOptions = ['Lou Lou', 'Chlo', 'Affo'];
 
@@ -173,7 +170,7 @@ const BookList: React.FC<BookListProps> = ({
               onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
             >
               <option value="">All Years</option>
-              {uniqueYears.map(year => (
+              {allAvailableYears.map(year => (
                 <option key={year} value={year}>{year}</option>
               ))}
             </select>
