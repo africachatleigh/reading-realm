@@ -91,6 +91,8 @@ const BookList: React.FC<BookListProps> = ({
     return years;
   }, [books]);
 
+  const whichWitchOptions = ['Lou Lou', 'Chlo', 'Affo'];
+
   // Helper function to get witch colors
   const getWitchColors = (witch: string) => {
     switch (witch) {
