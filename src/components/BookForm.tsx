@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Upload, Plus, X } from 'lucide-react';
+import { Upload, Plus, X, Trash2 } from 'lucide-react';
 import { Book, Genre, Series, Author } from '../types/Book';
 import { calculateOverallRating, convertToStarRating } from '../utils/storage';
 import RatingInput from './RatingInput';
@@ -16,6 +16,9 @@ interface BookFormProps {
   onAddGenre: (genreName: string) => void;
   onAddSeries: (seriesName: string) => void;
   onAddAuthor: (authorName: string) => void;
+  onDeleteGenre?: (genreId: string) => void;
+  onDeleteSeries?: (seriesId: string) => void;
+  onDeleteAuthor?: (authorId: string) => void;
 }
 
 const BookForm: React.FC<BookFormProps> = ({ 
@@ -28,7 +31,10 @@ const BookForm: React.FC<BookFormProps> = ({
   authors, 
   onAddGenre, 
   onAddSeries, 
-  onAddAuthor 
+  onAddAuthor,
+  onDeleteGenre,
+  onDeleteSeries,
+  onDeleteAuthor
 }) => {
   const [formData, setFormData] = useState({
     title: '',
@@ -57,9 +63,17 @@ const BookForm: React.FC<BookFormProps> = ({
   const [newAuthor, setNewAuthor] = useState('');
   const [showAddAuthor, setShowAddAuthor] = useState(false);
   const [imageChanged, setImageChanged] = useState(false);
+  const [showManageAuthors, setShowManageAuthors] = useState(false);
+  const [showManageSeries, setShowManageSeries] = useState(false);
+  const [showManageGenres, setShowManageGenres] = useState(false);
 
   // Which Witch options
   const whichWitchOptions = ['Lou Lou', 'Chlo', 'Affo'];
+
+  // Sort authors and series alphabetically
+  const sortedAuthors = [...authors].sort((a, b) => a.name.localeCompare(b.name));
+  const sortedSeries = [...series].sort((a, b) => a.name.localeCompare(b.name));
+  const sortedGenres = [...genres].sort((a, b) => a.name.localeCompare(b.name));
 
   // Populate form when editing
   useEffect(() => {
@@ -161,6 +175,48 @@ const BookForm: React.FC<BookFormProps> = ({
       setFormData(prev => ({ ...prev, author: newAuthor.trim() }));
       setNewAuthor('');
       setShowAddAuthor(false);
+    }
+  };
+
+  const handleDeleteAuthor = (authorId: string, authorName: string) => {
+    if (onDeleteAuthor) {
+      const confirmed = window.confirm(`Are you sure you want to delete the author "${authorName}"? This action cannot be undone.`);
+      if (confirmed) {
+        onDeleteAuthor(authorId);
+        // If the deleted author was selected, clear the selection
+        if (formData.author === authorName) {
+          setFormData(prev => ({ ...prev, author: '' }));
+        }
+      }
+    }
+  };
+
+  const handleDeleteSeries = (seriesId: string, seriesName: string) => {
+    if (onDeleteSeries) {
+      const confirmed = window.confirm(`Are you sure you want to delete the series "${seriesName}"? This action cannot be undone.`);
+      if (confirmed) {
+        onDeleteSeries(seriesId);
+        // If the deleted series was selected, clear the selection
+        if (formData.seriesName === seriesName) {
+          setFormData(prev => ({ ...prev, seriesName: '' }));
+        }
+      }
+    }
+  };
+
+  const handleDeleteGenre = (genreId: string, genreName: string) => {
+    if (onDeleteGenre) {
+      const confirmed = window.confirm(`Are you sure you want to delete the genre "${genreName}"? This action cannot be undone.`);
+      if (confirmed) {
+        onDeleteGenre(genreId);
+        // If the deleted genre was selected, remove it from selection
+        if (formData.genres.includes(genreName)) {
+          setFormData(prev => ({ 
+            ...prev, 
+            genres: prev.genres.filter(g => g !== genreName)
+          }));
+        }
+      }
     }
   };
 
@@ -283,7 +339,16 @@ const BookForm: React.FC<BookFormProps> = ({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Author *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Author *
+                <button
+                  type="button"
+                  onClick={() => setShowManageAuthors(!showManageAuthors)}
+                  className="ml-2 text-xs text-gray-500 hover:text-gray-700"
+                >
+                  {showManageAuthors ? 'Hide' : 'Manage'}
+                </button>
+              </label>
               <div className="space-y-2">
                 <select
                   required
@@ -298,10 +363,32 @@ const BookForm: React.FC<BookFormProps> = ({
                   onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
                 >
                   <option value="">Select an author</option>
-                  {authors.map(author => (
+                  {sortedAuthors.map(author => (
                     <option key={author.id} value={author.name}>{author.name}</option>
                   ))}
                 </select>
+
+                {/* Manage Authors Section */}
+                {showManageAuthors && (
+                  <div className="border border-gray-200 rounded-lg p-3 bg-gray-50">
+                    <div className="text-sm font-medium text-gray-700 mb-2">Manage Authors</div>
+                    <div className="max-h-32 overflow-y-auto space-y-1">
+                      {sortedAuthors.map(author => (
+                        <div key={author.id} className="flex items-center justify-between py-1">
+                          <span className="text-sm text-gray-700">{author.name}</span>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteAuthor(author.id, author.name)}
+                            className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded"
+                            title="Delete author"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {!showAddAuthor ? (
                   <button
@@ -421,6 +508,13 @@ const BookForm: React.FC<BookFormProps> = ({
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Genres * ({formData.genres.length} selected)
+              <button
+                type="button"
+                onClick={() => setShowManageGenres(!showManageGenres)}
+                className="ml-2 text-xs text-gray-500 hover:text-gray-700"
+              >
+                {showManageGenres ? 'Hide' : 'Manage'}
+              </button>
             </label>
             
             {/* Selected Genres Display */}
@@ -447,7 +541,7 @@ const BookForm: React.FC<BookFormProps> = ({
 
             {/* Genre Selection Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-3 max-h-40 overflow-y-auto border border-gray-200 rounded-lg p-3">
-              {genres.map(genre => (
+              {sortedGenres.map(genre => (
                 <label
                   key={genre.id}
                   className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded"
@@ -465,6 +559,28 @@ const BookForm: React.FC<BookFormProps> = ({
                 </label>
               ))}
             </div>
+
+            {/* Manage Genres Section */}
+            {showManageGenres && (
+              <div className="border border-gray-200 rounded-lg p-3 bg-gray-50 mb-3">
+                <div className="text-sm font-medium text-gray-700 mb-2">Manage Genres</div>
+                <div className="max-h-32 overflow-y-auto space-y-1">
+                  {sortedGenres.map(genre => (
+                    <div key={genre.id} className="flex items-center justify-between py-1">
+                      <span className="text-sm text-gray-700">{genre.name}</span>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteGenre(genre.id, genre.name)}
+                        className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded"
+                        title="Delete genre"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Add Custom Genre */}
             {!showAddGenre ? (
@@ -548,6 +664,17 @@ const BookForm: React.FC<BookFormProps> = ({
 
               {!formData.isStandalone && (
                 <div className="ml-7 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-700">Series Name</span>
+                    <button
+                      type="button"
+                      onClick={() => setShowManageSeries(!showManageSeries)}
+                      className="text-xs text-gray-500 hover:text-gray-700"
+                    >
+                      {showManageSeries ? 'Hide' : 'Manage'}
+                    </button>
+                  </div>
+                  
                   <select
                     value={formData.seriesName}
                     onChange={(e) => setFormData(prev => ({ ...prev, seriesName: e.target.value }))}
@@ -560,10 +687,32 @@ const BookForm: React.FC<BookFormProps> = ({
                     onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
                   >
                     <option value="">Select a series</option>
-                    {series.map(s => (
+                    {sortedSeries.map(s => (
                       <option key={s.id} value={s.name}>{s.name}</option>
                     ))}
                   </select>
+
+                  {/* Manage Series Section */}
+                  {showManageSeries && (
+                    <div className="border border-gray-200 rounded-lg p-3 bg-gray-50">
+                      <div className="text-sm font-medium text-gray-700 mb-2">Manage Series</div>
+                      <div className="max-h-32 overflow-y-auto space-y-1">
+                        {sortedSeries.map(s => (
+                          <div key={s.id} className="flex items-center justify-between py-1">
+                            <span className="text-sm text-gray-700">{s.name}</span>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteSeries(s.id, s.name)}
+                              className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded"
+                              title="Delete series"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   {!showAddSeries ? (
                     <button
@@ -595,7 +744,7 @@ const BookForm: React.FC<BookFormProps> = ({
                         onClick={handleAddSeries}
                         className="px-4 py-2 text-white rounded-lg transition-colors"
                         style={{ backgroundColor: '#d681a3' }}
-                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#5d8a47'}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#c166a0'}
                         onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#d681a3'}
                       >
                         Add
