@@ -14,6 +14,7 @@ interface BookListProps {
   onEditBook: (book: Book) => void;
   showFiltersOnly?: boolean;
   totalCount?: number;
+  totalCollectionCount?: number;
   isLoading?: boolean;
   hasMore?: boolean;
   onLoadMore?: () => void;
@@ -41,6 +42,7 @@ const BookList: React.FC<BookListProps> = ({
   onEditBook, 
   showFiltersOnly = false,
   totalCount = 0,
+  totalCollectionCount = 0,
   isLoading = false,
   hasMore = false,
   onLoadMore,
@@ -221,13 +223,7 @@ const BookList: React.FC<BookListProps> = ({
 
           <div className="flex items-center justify-between">
             <div className="text-sm text-gray-600">
-              {searchTerm || genreFilter || yearFilter || whichWitchFilter ? (
-                // When filters are applied, show filtered results vs total
-                `Showing ${books.length}${hasMore ? '+' : ''} of ${totalCount} filtered results`
-              ) : (
-                // When no filters, show loaded vs total
-                `Showing ${books.length} of ${totalCount} books`
-              )}
+              Showing {totalCount} of {totalCollectionCount} books
             </div>
             <div className="flex items-center space-x-2">
               <button
