@@ -269,7 +269,35 @@ export async function fetchBooksWithPagination(
   }
 }
 
-// Keep the original fetchBooks function for backward compatibility
+// Get all unique years from books for filter dropdown
+export async function fetchAllYears(): Promise<number[]> {
+  try {
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.warn('Supabase not configured, returning empty array');
+      return [];
+    }
+
+    console.log('Fetching all available years from Supabase...');
+    const { data, error } = await supabase
+      .from('books')
+      .select('completionyear')
+      .order('completionyear', { ascending: false });
+    
+    if (error) {
+      console.error('Error fetching years:', error);
+      throw error;
+    }
+    
+    // Get unique years and sort them
+    const years = Array.from(new Set(data?.map(book => book.completionyear) || [])).sort((a, b) => b - a);
+    
+    console.log('Successfully fetched years:', years);
+    return years;
+  } catch (error) {
+    console.error('Failed to fetch years:', error);
+    throw error;
+  }
+}
 export async function fetchBooks(): Promise<Book[]> {
   try {
     if (!supabaseUrl || !supabaseAnonKey) {
