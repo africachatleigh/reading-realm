@@ -1,31 +1,4 @@
-// Delete a book from Supabase
-export async function deleteBook(id: string): Promise<void> {
-  try {
-    if (!supabaseUrl || !supabaseAnonKey) {
-      throw new Error('Supabase not configured. Please add environment variables.');
-    }
-
-    console.log('Deleting book from Supabase:', id);
-    
-    // Get the book data to clean up associated image
-    const { data: book, error: fetchError } = await supabase
-      .from('books')
-      .select('coverimage')
-      .eq('id', id)
-      .single();
-    
-    if (!fetchError && book?.coverimage) {
-      await deleteBookCover(book.coverimage);
-    }
-    
-    const { error } = await supabase
-      .from('books')
-      .delete()
-      .eq('id', id);
-
-    if (error) {
-      console.error('Error deleting book:', error);
-      import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js';
 import { Book, Genre, Series, Author } from './types/Book';
 
 // Environment variables for Vercel deployment
