@@ -3,6 +3,7 @@ import {
   updateBook, 
   fetchBooks, 
   fetchBooksWithPagination, 
+  fetchAllYears,
   testConnection, 
   deleteBook,
   fetchGenres,
@@ -28,6 +29,7 @@ import { convertToStarRating } from './utils/storage';
 
 function App() {
   const [books, setBooks] = useState<BookType[]>([]);
+  const [allAvailableYears, setAllAvailableYears] = useState<number[]>([]);
   const [genres, setGenres] = useState<Genre[]>([]);
   const [series, setSeries] = useState<Series[]>([]);
   const [authors, setAuthors] = useState<Author[]>([]);
@@ -150,10 +152,11 @@ function App() {
         if (isConnected) {
           // Load first page of books
           await loadBooksPage(0, true);
-          // Load genres, series, and authors from database
+          // Load genres, series, authors, and years from database
           await loadGenresFromDB();
           await loadSeriesFromDB();
           await loadAuthorsFromDB();
+          await loadAvailableYears();
         } else {
           // If not connected, start with empty array
           console.warn('Supabase not connected, starting with empty book list. Please check your Vercel environment variables.');
@@ -161,6 +164,7 @@ function App() {
           setGenres([]);
           setSeries([]);
           setAuthors([]);
+          setAllAvailableYears([]);
           setIsLoading(false);
         }
       } catch (error) {
@@ -170,6 +174,7 @@ function App() {
         setGenres([]);
         setSeries([]);
         setAuthors([]);
+        setAllAvailableYears([]);
         setIsLoading(false);
       }
     };
@@ -177,11 +182,48 @@ function App() {
     initializeApp();
   }, []);
 
+  // Load all available years from database
+  const loadAvailableYears = async () => {
+    try {
+      const years = await fetchAllYears();
+      setAllAvailableYears(years);
+    } catch (error) {
+      console.error('Failed to load available years:', error);
+      setAllAvailableYears([]);
+    }
+  };
+
   // Load genres from database
   const loadGenresFromDB = async () => {
     try {
       const dbGenres = await fetchGenres();
-      setGenres(dbGenres);
+      
+      // If database is empty, populate with default genres
+      if (dbGenres.length === 0) {
+        console.log('No genres in database, populating with defaults...');
+        const defaultGenres = [
+          'Fantasy Fiction', 'Epic Fantasy', 'Romantasy', 'Mythology Retelling', 
+          'Cosy Fantasy', 'Grimdark Fantasy', 'Urban Fantasy', 'Fairytale Fantasy',
+          'Dystopian Fiction', 'Thriller/Mystery', 'Childrens Fiction', 'Young Adult Fiction',
+          'Historical Fiction', 'Sci-Fi', 'Contemporary Fiction', 'Romance',
+          'Paranormal Fiction', 'Gothic Fiction', 'Horror', 'Magical Realism', 'Non-Fiction'
+        ];
+        
+        // Add all default genres to database
+        const addedGenres = [];
+        for (const genreName of defaultGenres) {
+          try {
+            const newGenre = await addGenre(genreName);
+            addedGenres.push(newGenre);
+          } catch (error) {
+            console.error(`Failed to add default genre ${genreName}:`, error);
+          }
+        }
+        
+        setGenres(addedGenres.sort((a, b) => a.name.localeCompare(b.name)));
+      } else {
+        setGenres(dbGenres);
+      }
     } catch (error) {
       console.error('Failed to load genres from database:', error);
       setGenres([]);
@@ -515,6 +557,7 @@ function App() {
               onEditBook={setEditingBook}
               showFiltersOnly={true}
               totalCount={totalCount}
+              allAvailableYears={allAvailableYears}
               // Pass filter state and setters
               searchTerm={searchTerm}
               setSearchTerm={setSearchTerm}
@@ -544,6 +587,7 @@ function App() {
           isLoading={isLoadingMore}
           hasMore={hasMore}
           onLoadMore={loadMoreBooks}
+          allAvailableYears={allAvailableYears}
           // Pass the same filter state
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
