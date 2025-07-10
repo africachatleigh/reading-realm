@@ -1,5 +1,32 @@
-import { createClient } from '@supabase/supabase-js';
-import { Book } from './types/Book';
+// Delete a book from Supabase
+export async function deleteBook(id: string): Promise<void> {
+  try {
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('Supabase not configured. Please add environment variables.');
+    }
+
+    console.log('Deleting book from Supabase:', id);
+    
+    // Get the book data to clean up associated image
+    const { data: book, error: fetchError } = await supabase
+      .from('books')
+      .select('coverimage')
+      .eq('id', id)
+      .single();
+    
+    if (!fetchError && book?.coverimage) {
+      await deleteBookCover(book.coverimage);
+    }
+    
+    const { error } = await supabase
+      .from('books')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error deleting book:', error);
+      import { createClient } from '@supabase/supabase-js';
+import { Book, Genre, Series, Author } from './types/Book';
 
 // Environment variables for Vercel deployment
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -505,6 +532,206 @@ export async function deleteBook(id: string): Promise<void> {
     console.log('Successfully deleted book:', id);
   } catch (error) {
     console.error('Failed to delete book:', error);
+    throw error;
+  }
+}
+
+// ==================== GENRES ====================
+
+// Fetch all genres from Supabase
+export async function fetchGenres(): Promise<Genre[]> {
+  try {
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.warn('Supabase not configured, returning empty array');
+      return [];
+    }
+
+    console.log('Fetching genres from Supabase...');
+    const { data, error } = await supabase
+      .from('genres')
+      .select('*')
+      .order('name', { ascending: true });
+    
+    if (error) {
+      console.error('Error fetching genres:', error);
+      throw error;
+    }
+    
+    console.log('Successfully fetched genres:', data?.length || 0);
+    
+    // Map database column names to expected property names
+    const mappedGenres = data?.map(genre => ({
+      id: genre.id,
+      name: genre.name,
+      isCustom: genre.is_custom
+    })) || [];
+    
+    return mappedGenres as Genre[];
+  } catch (error) {
+    console.error('Failed to fetch genres:', error);
+    throw error;
+  }
+}
+
+// Add a new genre to Supabase
+export async function addGenre(name: string): Promise<Genre> {
+  try {
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('Supabase not configured. Please add environment variables.');
+    }
+
+    console.log('Adding genre to Supabase:', name);
+    
+    const { data, error } = await supabase
+      .from('genres')
+      .insert([{ name, is_custom: true }])
+      .select()
+      .single();
+    
+    if (error) {
+      console.error('Error adding genre:', error);
+      throw error;
+    }
+    
+    console.log('Successfully added genre:', data.name);
+    
+    return {
+      id: data.id,
+      name: data.name,
+      isCustom: data.is_custom
+    };
+  } catch (error) {
+    console.error('Failed to add genre:', error);
+    throw error;
+  }
+}
+
+// ==================== SERIES ====================
+
+// Fetch all series from Supabase
+export async function fetchSeries(): Promise<Series[]> {
+  try {
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.warn('Supabase not configured, returning empty array');
+      return [];
+    }
+
+    console.log('Fetching series from Supabase...');
+    const { data, error } = await supabase
+      .from('series')
+      .select('*')
+      .order('name', { ascending: true });
+    
+    if (error) {
+      console.error('Error fetching series:', error);
+      throw error;
+    }
+    
+    console.log('Successfully fetched series:', data?.length || 0);
+    
+    return data?.map(series => ({
+      id: series.id,
+      name: series.name
+    })) || [];
+  } catch (error) {
+    console.error('Failed to fetch series:', error);
+    throw error;
+  }
+}
+
+// Add a new series to Supabase
+export async function addSeries(name: string): Promise<Series> {
+  try {
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('Supabase not configured. Please add environment variables.');
+    }
+
+    console.log('Adding series to Supabase:', name);
+    
+    const { data, error } = await supabase
+      .from('series')
+      .insert([{ name }])
+      .select()
+      .single();
+    
+    if (error) {
+      console.error('Error adding series:', error);
+      throw error;
+    }
+    
+    console.log('Successfully added series:', data.name);
+    
+    return {
+      id: data.id,
+      name: data.name
+    };
+  } catch (error) {
+    console.error('Failed to add series:', error);
+    throw error;
+  }
+}
+
+// ==================== AUTHORS ====================
+
+// Fetch all authors from Supabase
+export async function fetchAuthors(): Promise<Author[]> {
+  try {
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.warn('Supabase not configured, returning empty array');
+      return [];
+    }
+
+    console.log('Fetching authors from Supabase...');
+    const { data, error } = await supabase
+      .from('authors')
+      .select('*')
+      .order('name', { ascending: true });
+    
+    if (error) {
+      console.error('Error fetching authors:', error);
+      throw error;
+    }
+    
+    console.log('Successfully fetched authors:', data?.length || 0);
+    
+    return data?.map(author => ({
+      id: author.id,
+      name: author.name
+    })) || [];
+  } catch (error) {
+    console.error('Failed to fetch authors:', error);
+    throw error;
+  }
+}
+
+// Add a new author to Supabase
+export async function addAuthor(name: string): Promise<Author> {
+  try {
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('Supabase not configured. Please add environment variables.');
+    }
+
+    console.log('Adding author to Supabase:', name);
+    
+    const { data, error } = await supabase
+      .from('authors')
+      .insert([{ name }])
+      .select()
+      .single();
+    
+    if (error) {
+      console.error('Error adding author:', error);
+      throw error;
+    }
+    
+    console.log('Successfully added author:', data.name);
+    
+    return {
+      id: data.id,
+      name: data.name
+    };
+  } catch (error) {
+    console.error('Failed to add author:', error);
     throw error;
   }
 }
