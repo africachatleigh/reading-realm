@@ -207,8 +207,10 @@ export async function fetchBooksWithPagination(
         query = query.order('author', { ascending });
         break;
       case 'date':
+        // Sort by completion date first, then by date added (most recent first within each month)
         query = query.order('completionyear', { ascending })
-                     .order('completionmonth', { ascending });
+                     .order('completionmonth', { ascending })
+                     .order('dateadded', { ascending: false }); // Most recent additions first within each month
         break;
       case 'rating':
         query = query.order('overallrating', { ascending });
@@ -218,7 +220,7 @@ export async function fetchBooksWithPagination(
         query = query.order('title', { ascending }); // Fallback sort
         break;
       default:
-        query = query.order('dateadded', { ascending });
+        query = query.order('dateadded', { ascending: false }); // Default to newest first
     }
 
     // Apply pagination
