@@ -15,6 +15,20 @@ const BookCard: React.FC<BookCardProps> = ({ book, onEdit }) => {
     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
   ];
 
+  // Helper function to get witch colors
+  const getWitchColors = (witch: string) => {
+    switch (witch) {
+      case 'Affo':
+        return { backgroundColor: '#98e1eb', color: '#39929e' };
+      case 'Lou Lou':
+        return { backgroundColor: '#f5af69', color: '#b86009' };
+      case 'Chlo':
+        return { backgroundColor: '#abd9a3', color: '#507a48' };
+      default:
+        return { backgroundColor: '#d681a3', color: 'white' };
+    }
+  };
+
   return (
     <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden group relative min-h-48 md:h-48">
       {/* Edit Button */}
@@ -28,11 +42,12 @@ const BookCard: React.FC<BookCardProps> = ({ book, onEdit }) => {
       <div className="flex h-full">
         {/* Book Cover - Full Height */}
         <div className="flex-shrink-0">
-          {book.coverimage ? (
+          {book.coverImage ? (
             <img
-              src={book.coverimage}
+              src={book.coverImage}
               alt={`${book.title} cover`}
               className="w-32 h-full object-cover rounded-l-xl"
+              loading="lazy"
             />
           ) : (
             <div className="w-32 h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center rounded-l-xl">
@@ -105,8 +120,11 @@ const BookCard: React.FC<BookCardProps> = ({ book, onEdit }) => {
               {/* Which Witch Information */}
               {book.whichWitch && (
                 <div className="flex items-center space-x-1">
-                  <Users className="w-3 h-3 flex-shrink-0" style={{ color: '#d681a3' }} />
-                  <span className="text-xs text-white px-2 py-1 rounded-full" style={{ backgroundColor: '#d681a3' }}>
+                  <Users className="w-3 h-3 flex-shrink-0" style={{ color: getWitchColors(book.whichWitch).backgroundColor }} />
+                  <span 
+                    className="text-xs px-2 py-1 rounded-full font-medium"
+                    style={getWitchColors(book.whichWitch)}
+                  >
                     {book.whichWitch}
                   </span>
                 </div>
@@ -116,7 +134,7 @@ const BookCard: React.FC<BookCardProps> = ({ book, onEdit }) => {
 
           {/* Star rating - fixed at bottom with proper spacing */}
           <div className="pt-2 mt-auto">
-            <StarRating rating={convertToStarRating(book.overallrating)} size="sm" />
+            <StarRating rating={convertToStarRating(book.overallRating)} size="sm" />
           </div>
         </div>
 
