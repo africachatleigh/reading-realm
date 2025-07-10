@@ -5,18 +5,18 @@ const SERIES_KEY = 'bookTracker_series';
 const AUTHORS_KEY = 'bookTracker_authors';
 
 export const defaultGenres: Genre[] = [
-  { id: '1', name: 'Epic Fantasy', isCustom: false },
-  { id: '2', name: 'High Fantasy', isCustom: false },
-  { id: '3', name: 'Low Fantasy', isCustom: false },
+  { id: '1', name: 'Fantasy Fiction', isCustom: false },
+  { id: '2', name: 'Epic Fantasy', isCustom: false },
+  { id: '3', name: 'High Fantasy', isCustom: false },
   { id: '4', name: 'Romantasy', isCustom: false },
   { id: '5', name: 'Cosy Fantasy', isCustom: false },
   { id: '6', name: 'Grimdark Fantasy', isCustom: false },
   { id: '7', name: 'Urban Fantasy', isCustom: false },
   { id: '8', name: 'Fairytale Fantasy', isCustom: false },
   { id: '9', name: 'Dystopian Fiction', isCustom: false },
-  { id: '10', name: 'Mythology Retelling', isCustom: false },
+  { id: '10', name: 'Low Fantasy', isCustom: false },
   { id: '11', name: 'Childrens Fiction', isCustom: false },
-  { id: '12', name: 'YA Fiction', isCustom: false },
+  { id: '12', name: 'Young Adult Fiction', isCustom: false },
   { id: '13', name: 'Historical Fiction', isCustom: false },
   { id: '14', name: 'Sci-Fi', isCustom: false },
   { id: '15', name: 'Contemporary Fiction', isCustom: false },
@@ -27,6 +27,7 @@ export const defaultGenres: Genre[] = [
   { id: '20', name: 'Magical Realism', isCustom: false },
   { id: '21', name: 'Thriller/Mystery', isCustom: false },
   { id: '22', name: 'Non-Fiction', isCustom: false },
+  { id: '23', name: 'Mythology Retelling', isCustom: false },
 ];
 
 export const defaultAuthors: Author[] = [
