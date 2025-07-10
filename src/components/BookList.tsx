@@ -91,7 +91,19 @@ const BookList: React.FC<BookListProps> = ({
     return years;
   }, [books]);
 
-  const whichWitchOptions = ['Lou Lou', 'Chlo', 'Affo'];
+  // Helper function to get witch colors
+  const getWitchColors = (witch: string) => {
+    switch (witch) {
+      case 'Affo':
+        return { backgroundColor: '#98e1eb', color: '#39929e' };
+      case 'Lou Lou':
+        return { backgroundColor: '#f5af69', color: '#b86009' };
+      case 'Chlo':
+        return { backgroundColor: '#abd9a3', color: '#507a48' };
+      default:
+        return { backgroundColor: '#d681a3', color: 'white' };
+    }
+  };
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -393,8 +405,8 @@ const BookList: React.FC<BookListProps> = ({
                     <td className="px-6 py-4 whitespace-nowrap">
                       {book.whichWitch ? (
                         <span 
-                          className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full text-white"
-                          style={{ backgroundColor: '#d681a3' }}
+                          className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full"
+                          style={getWitchColors(book.whichWitch)}
                         >
                           {book.whichWitch}
                         </span>
