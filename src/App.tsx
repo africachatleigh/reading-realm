@@ -5,18 +5,18 @@ import {
   fetchBooksWithPagination, 
   testConnection, 
   deleteBook,
+  fetchGenres,
+  addGenre,
+  fetchSeries,
+  addSeries,
+  fetchAuthors,
+  addAuthor,
   type BookFilters 
 } from './supabaseClient';
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { Plus, BarChart3, BookOpen, AlertCircle } from 'lucide-react';
 import { Book as BookType, Genre, Series, Author } from './types/Book';
 import { 
-  loadGenres, 
-  saveGenres, 
-  loadSeries, 
-  saveSeries, 
-  loadAuthors, 
-  saveAuthors, 
   calculateOverallRating 
 } from './utils/storage';
 import BookForm from './components/BookForm';
@@ -147,25 +147,65 @@ function App() {
         if (isConnected) {
           // Load first page of books
           await loadBooksPage(0, true);
+          // Load genres, series, and authors from database
+          await loadGenresFromDB();
+          await loadSeriesFromDB();
+          await loadAuthorsFromDB();
         } else {
           // If not connected, start with empty array
           console.warn('Supabase not connected, starting with empty book list. Please check your Vercel environment variables.');
           setBooks([]);
+          setGenres([]);
+          setSeries([]);
+          setAuthors([]);
           setIsLoading(false);
         }
       } catch (error) {
         console.error('Failed to initialize app:', error);
         setSupabaseConnected(false);
         setBooks([]);
+        setGenres([]);
+        setSeries([]);
+        setAuthors([]);
         setIsLoading(false);
       }
     };
 
     initializeApp();
-    setGenres(loadGenres());
-    setSeries(loadSeries());
-    setAuthors(loadAuthors());
   }, []);
+
+  // Load genres from database
+  const loadGenresFromDB = async () => {
+    try {
+      const dbGenres = await fetchGenres();
+      setGenres(dbGenres);
+    } catch (error) {
+      console.error('Failed to load genres from database:', error);
+      setGenres([]);
+    }
+  };
+
+  // Load series from database
+  const loadSeriesFromDB = async () => {
+    try {
+      const dbSeries = await fetchSeries();
+      setSeries(dbSeries);
+    } catch (error) {
+      console.error('Failed to load series from database:', error);
+      setSeries([]);
+    }
+  };
+
+  // Load authors from database
+  const loadAuthorsFromDB = async () => {
+    try {
+      const dbAuthors = await fetchAuthors();
+      setAuthors(dbAuthors);
+    } catch (error) {
+      console.error('Failed to load authors from database:', error);
+      setAuthors([]);
+    }
+  };
   
   const handleEditBook = async (bookData: Omit<BookType, 'overallRating'>) => {
     if (!supabaseConnected) {
@@ -263,38 +303,52 @@ function App() {
     }
   };
   
-  const handleAddGenre = (genreName: string) => {
-    const newGenre: Genre = {
-      id: Date.now().toString(),
-      name: genreName,
-      isCustom: true,
-    };
+  const handleAddGenre = async (genreName: string) => {
+    if (!supabaseConnected) {
+      alert('Please connect Supabase first.');
+      return;
+    }
 
-    const updatedGenres = [...genres, newGenre];
-    setGenres(updatedGenres);
-    saveGenres(updatedGenres);
+    try {
+      const newGenre = await addGenre(genreName);
+      setGenres(prev => [...prev, newGenre]);
+      console.log('Genre added successfully:', newGenre.name);
+    } catch (error) {
+      console.error('Failed to add genre:', error);
+      alert('Failed to add genre. Please try again.');
+    }
   };
 
-  const handleAddSeries = (seriesName: string) => {
-    const newSeries: Series = {
-      id: Date.now().toString(),
-      name: seriesName,
-    };
+  const handleAddSeries = async (seriesName: string) => {
+    if (!supabaseConnected) {
+      alert('Please connect Supabase first.');
+      return;
+    }
 
-    const updatedSeries = [...series, newSeries];
-    setSeries(updatedSeries);
-    saveSeries(updatedSeries);
+    try {
+      const newSeries = await addSeries(seriesName);
+      setSeries(prev => [...prev, newSeries]);
+      console.log('Series added successfully:', newSeries.name);
+    } catch (error) {
+      console.error('Failed to add series:', error);
+      alert('Failed to add series. Please try again.');
+    }
   };
 
-  const handleAddAuthor = (authorName: string) => {
-    const newAuthor: Author = {
-      id: Date.now().toString(),
-      name: authorName,
-    };
+  const handleAddAuthor = async (authorName: string) => {
+    if (!supabaseConnected) {
+      alert('Please connect Supabase first.');
+      return;
+    }
 
-    const updatedAuthors = [...authors, newAuthor];
-    setAuthors(updatedAuthors);
-    saveAuthors(updatedAuthors);
+    try {
+      const newAuthor = await addAuthor(authorName);
+      setAuthors(prev => [...prev, newAuthor]);
+      console.log('Author added successfully:', newAuthor.name);
+    } catch (error) {
+      console.error('Failed to add author:', error);
+      alert('Failed to add author. Please try again.');
+    }
   };
 
   const getStats = () => {
