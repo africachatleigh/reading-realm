@@ -445,7 +445,6 @@ const BookForm: React.FC<BookFormProps> = ({
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Which Witch *
-              <span className="text-red-500 ml-1 font-normal text-xs">(Required)</span>
             </label>
             <select
               required
@@ -470,7 +469,6 @@ const BookForm: React.FC<BookFormProps> = ({
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Completion Date *
-              <span className="text-red-500 ml-1 font-normal text-xs">(Required)</span>
             </label>
             <div className="grid grid-cols-2 gap-4">
               <select
