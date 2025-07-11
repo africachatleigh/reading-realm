@@ -19,6 +19,9 @@ interface BookFormProps {
   onDeleteGenre?: (genreId: string) => void;
   onDeleteSeries?: (seriesId: string) => void;
   onDeleteAuthor?: (authorId: string) => void;
+  onEditGenre?: (genreId: string, oldName: string, newName: string) => void;
+  onEditSeries?: (seriesId: string, oldName: string, newName: string) => void;
+  onEditAuthor?: (authorId: string, oldName: string, newName: string) => void;
 }
 
 const BookForm: React.FC<BookFormProps> = ({ 
@@ -34,7 +37,10 @@ const BookForm: React.FC<BookFormProps> = ({
   onAddAuthor,
   onDeleteGenre,
   onDeleteSeries,
-  onDeleteAuthor
+  onDeleteAuthor,
+  onEditGenre,
+  onEditSeries,
+  onEditAuthor
 }) => {
   const [formData, setFormData] = useState({
     title: '',
@@ -66,6 +72,14 @@ const BookForm: React.FC<BookFormProps> = ({
   const [showManageAuthors, setShowManageAuthors] = useState(false);
   const [showManageSeries, setShowManageSeries] = useState(false);
   const [showManageGenres, setShowManageGenres] = useState(false);
+  
+  // Edit states
+  const [editingAuthorId, setEditingAuthorId] = useState<string | null>(null);
+  const [editingSeriesId, setEditingSeriesId] = useState<string | null>(null);
+  const [editingGenreId, setEditingGenreId] = useState<string | null>(null);
+  const [editingAuthorName, setEditingAuthorName] = useState('');
+  const [editingSeriesName, setEditingSeriesName] = useState('');
+  const [editingGenreName, setEditingGenreName] = useState('');
 
   // Which Witch options
   const whichWitchOptions = ['Lou Lou', 'Chlo', 'Affo'];
@@ -376,15 +390,79 @@ const BookForm: React.FC<BookFormProps> = ({
                     <div className="max-h-32 overflow-y-auto space-y-1">
                       {sortedAuthors.map(author => (
                         <div key={author.id} className="flex items-center justify-between py-1">
-                          <span className="text-sm text-gray-700">{author.name}</span>
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteAuthor(author.id, author.name)}
-                            className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded"
-                            title="Delete author"
-                          >
-                            <Trash2 className="w-3 h-3" />
-                          </button>
+                          {editingAuthorId === author.id ? (
+                            <div className="flex items-center space-x-2 flex-1">
+                              <input
+                                type="text"
+                                value={editingAuthorName}
+                                onChange={(e) => setEditingAuthorName(e.target.value)}
+                                className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded"
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    if (onEditAuthor && editingAuthorName.trim()) {
+                                      onEditAuthor(author.id, author.name, editingAuthorName.trim());
+                                      setEditingAuthorId(null);
+                                      setEditingAuthorName('');
+                                    }
+                                  } else if (e.key === 'Escape') {
+                                    setEditingAuthorId(null);
+                                    setEditingAuthorName('');
+                                  }
+                                }}
+                                autoFocus
+                              />
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  if (onEditAuthor && editingAuthorName.trim()) {
+                                    onEditAuthor(author.id, author.name, editingAuthorName.trim());
+                                    setEditingAuthorId(null);
+                                    setEditingAuthorName('');
+                                  }
+                                }}
+                                className="p-1 text-green-600 hover:text-green-800"
+                                title="Save"
+                              >
+                                ✓
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setEditingAuthorId(null);
+                                  setEditingAuthorName('');
+                                }}
+                                className="p-1 text-gray-500 hover:text-gray-700"
+                                title="Cancel"
+                              >
+                                ✕
+                              </button>
+                            </div>
+                          ) : (
+                            <>
+                              <span className="text-sm text-gray-700">{author.name}</span>
+                              <div className="flex space-x-1">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setEditingAuthorId(author.id);
+                                    setEditingAuthorName(author.name);
+                                  }}
+                                  className="p-1 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded"
+                                  title="Edit author"
+                                >
+                                  <Edit className="w-3 h-3" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteAuthor(author.id, author.name)}
+                                  className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded"
+                                  title="Delete author"
+                                >
+                                  <Trash2 className="w-3 h-3" />
+                                </button>
+                              </div>
+                            </>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -574,15 +652,79 @@ const BookForm: React.FC<BookFormProps> = ({
                 <div className="max-h-32 overflow-y-auto space-y-1">
                   {sortedGenres.map(genre => (
                     <div key={genre.id} className="flex items-center justify-between py-1">
-                      <span className="text-sm text-gray-700">{genre.name}</span>
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteGenre(genre.id, genre.name)}
-                        className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded"
-                        title="Delete genre"
-                      >
-                        <Trash2 className="w-3 h-3" />
-                      </button>
+                      {editingGenreId === genre.id ? (
+                        <div className="flex items-center space-x-2 flex-1">
+                          <input
+                            type="text"
+                            value={editingGenreName}
+                            onChange={(e) => setEditingGenreName(e.target.value)}
+                            className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded"
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                if (onEditGenre && editingGenreName.trim()) {
+                                  onEditGenre(genre.id, genre.name, editingGenreName.trim());
+                                  setEditingGenreId(null);
+                                  setEditingGenreName('');
+                                }
+                              } else if (e.key === 'Escape') {
+                                setEditingGenreId(null);
+                                setEditingGenreName('');
+                              }
+                            }}
+                            autoFocus
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (onEditGenre && editingGenreName.trim()) {
+                                onEditGenre(genre.id, genre.name, editingGenreName.trim());
+                                setEditingGenreId(null);
+                                setEditingGenreName('');
+                              }
+                            }}
+                            className="p-1 text-green-600 hover:text-green-800"
+                            title="Save"
+                          >
+                            ✓
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditingGenreId(null);
+                              setEditingGenreName('');
+                            }}
+                            className="p-1 text-gray-500 hover:text-gray-700"
+                            title="Cancel"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ) : (
+                        <>
+                          <span className="text-sm text-gray-700">{genre.name}</span>
+                          <div className="flex space-x-1">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setEditingGenreId(genre.id);
+                                setEditingGenreName(genre.name);
+                              }}
+                              className="p-1 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded"
+                              title="Edit genre"
+                            >
+                              <Edit className="w-3 h-3" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteGenre(genre.id, genre.name)}
+                              className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded"
+                              title="Delete genre"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                          </div>
+                        </>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -707,15 +849,79 @@ const BookForm: React.FC<BookFormProps> = ({
                       <div className="max-h-32 overflow-y-auto space-y-1">
                         {sortedSeries.map(s => (
                           <div key={s.id} className="flex items-center justify-between py-1">
-                            <span className="text-sm text-gray-700">{s.name}</span>
-                            <button
-                              type="button"
-                              onClick={() => handleDeleteSeries(s.id, s.name)}
-                              className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded"
-                              title="Delete series"
-                            >
-                              <Trash2 className="w-3 h-3" />
-                            </button>
+                            {editingSeriesId === s.id ? (
+                              <div className="flex items-center space-x-2 flex-1">
+                                <input
+                                  type="text"
+                                  value={editingSeriesName}
+                                  onChange={(e) => setEditingSeriesName(e.target.value)}
+                                  className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded"
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      if (onEditSeries && editingSeriesName.trim()) {
+                                        onEditSeries(s.id, s.name, editingSeriesName.trim());
+                                        setEditingSeriesId(null);
+                                        setEditingSeriesName('');
+                                      }
+                                    } else if (e.key === 'Escape') {
+                                      setEditingSeriesId(null);
+                                      setEditingSeriesName('');
+                                    }
+                                  }}
+                                  autoFocus
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    if (onEditSeries && editingSeriesName.trim()) {
+                                      onEditSeries(s.id, s.name, editingSeriesName.trim());
+                                      setEditingSeriesId(null);
+                                      setEditingSeriesName('');
+                                    }
+                                  }}
+                                  className="p-1 text-green-600 hover:text-green-800"
+                                  title="Save"
+                                >
+                                  ✓
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setEditingSeriesId(null);
+                                    setEditingSeriesName('');
+                                  }}
+                                  className="p-1 text-gray-500 hover:text-gray-700"
+                                  title="Cancel"
+                                >
+                                  ✕
+                                </button>
+                              </div>
+                            ) : (
+                              <>
+                                <span className="text-sm text-gray-700">{s.name}</span>
+                                <div className="flex space-x-1">
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setEditingSeriesId(s.id);
+                                      setEditingSeriesName(s.name);
+                                    }}
+                                    className="p-1 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded"
+                                    title="Edit series"
+                                  >
+                                    <Edit className="w-3 h-3" />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleDeleteSeries(s.id, s.name)}
+                                    className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded"
+                                    title="Delete series"
+                                  >
+                                    <Trash2 className="w-3 h-3" />
+                                  </button>
+                                </div>
+                              </>
+                            )}
                           </div>
                         ))}
                       </div>
