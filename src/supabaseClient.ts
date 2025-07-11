@@ -298,6 +298,35 @@ export async function fetchAllYears(): Promise<number[]> {
     throw error;
   }
 }
+
+// Get count of books for current year
+export async function fetchCurrentYearCount(): Promise<number> {
+  try {
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.warn('Supabase not configured, returning 0');
+      return 0;
+    }
+
+    const currentYear = new Date().getFullYear();
+    console.log('Fetching current year count from Supabase for year:', currentYear);
+    
+    const { count, error } = await supabase
+      .from('books')
+      .select('*', { count: 'exact', head: true })
+      .eq('completionyear', currentYear);
+    
+    if (error) {
+      console.error('Error fetching current year count:', error);
+      throw error;
+    }
+    
+    console.log('Successfully fetched current year count:', count || 0);
+    return count || 0;
+  } catch (error) {
+    console.error('Failed to fetch current year count:', error);
+    throw error;
+  }
+}
 export async function fetchBooks(): Promise<Book[]> {
   try {
     if (!supabaseUrl || !supabaseAnonKey) {
