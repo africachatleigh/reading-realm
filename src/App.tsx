@@ -289,24 +289,17 @@ function App() {
       overallRating: calculateOverallRating(bookData.ratings),
     };
 
-    // Store original books for potential revert
-    const originalBooks = books;
-
     try {
       // The updateBook function now returns the updated book with the final image URL
       const finalUpdatedBook = await updateBook(bookToUpdate);
       
-      // Update the UI with the final book data (with correct image URL)
-      setBooks(prev => prev.map(book =>
-        book.id === finalUpdatedBook.id ? finalUpdatedBook : book
-      ));
-      
       setEditingBook(null);
       console.log('Book updated successfully in Supabase');
+      
+      // Refresh the book list to reflect changes in order/filtering
+      loadBooksPage(0, true);
     } catch (error) {
       console.error('Failed to update book:', error);
-      // Revert to original books on error
-      setBooks(originalBooks);
       alert('Failed to update book. Please check your Supabase connection and try again.');
     }
   };
