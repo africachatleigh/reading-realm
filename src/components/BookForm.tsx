@@ -344,9 +344,10 @@ const BookForm: React.FC<BookFormProps> = ({
                 <button
                   type="button"
                   onClick={() => setShowManageAuthors(!showManageAuthors)}
-                  className="ml-2 text-xs text-gray-500 hover:text-gray-700"
+                  className="ml-2 p-1 rounded hover:bg-gray-100 transition-colors"
+                  title={showManageAuthors ? 'Hide management' : 'Manage authors'}
                 >
-                  {showManageAuthors ? 'Hide' : 'Manage'}
+                  <Edit className="w-3 h-3" style={{ color: '#d681a3' }} />
                 </button>
               </label>
               <div className="space-y-2">
@@ -516,9 +517,10 @@ const BookForm: React.FC<BookFormProps> = ({
               <button
                 type="button"
                 onClick={() => setShowManageGenres(!showManageGenres)}
-                className="ml-2 text-xs text-gray-500 hover:text-gray-700"
+                className="ml-2 p-1 rounded hover:bg-gray-100 transition-colors"
+                title={showManageGenres ? 'Hide management' : 'Manage genres'}
               >
-                {showManageGenres ? 'Hide' : 'Manage'}
+                <Edit className="w-3 h-3" style={{ color: '#d681a3' }} />
               </button>
             </label>
             
@@ -674,9 +676,10 @@ const BookForm: React.FC<BookFormProps> = ({
                     <button
                       type="button"
                       onClick={() => setShowManageSeries(!showManageSeries)}
-                      className="text-xs text-gray-500 hover:text-gray-700"
+                      className="p-1 rounded hover:bg-gray-100 transition-colors"
+                      title={showManageSeries ? 'Hide management' : 'Manage series'}
                     >
-                      {showManageSeries ? 'Hide' : 'Manage'}
+                      <Edit className="w-3 h-3" style={{ color: '#d681a3' }} />
                     </button>
                   </div>
                   
