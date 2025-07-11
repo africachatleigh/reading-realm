@@ -4,6 +4,7 @@ import {
   fetchBooks, 
   fetchBooksWithPagination, 
   fetchAllYears,
+  fetchCurrentYearCount,
   testConnection, 
   deleteBook,
   fetchGenres,
@@ -47,6 +48,7 @@ function App() {
   const [hasMore, setHasMore] = useState(true);
   const [totalCount, setTotalCount] = useState(0);
   const [totalCollectionCount, setTotalCollectionCount] = useState(0);
+  const [currentYearCount, setCurrentYearCount] = useState(0);
   const [filtersChanged, setFiltersChanged] = useState(false);
   
   // Shared filter state
@@ -156,12 +158,13 @@ function App() {
         if (isConnected) {
           // Load first page of books
           await loadBooksPage(0, true);
-          // Load genres, series, authors, years, and total count from database
+          // Load genres, series, authors, years, and counts from database
           await loadGenresFromDB();
           await loadSeriesFromDB();
           await loadAuthorsFromDB();
           await loadAvailableYears();
           await loadTotalCollectionCount();
+          await loadCurrentYearCount();
         } else {
           // If not connected, start with empty array
           console.warn('Supabase not connected, starting with empty book list. Please check your Vercel environment variables.');
@@ -171,6 +174,7 @@ function App() {
           setAuthors([]);
           setAllAvailableYears([]);
           setTotalCollectionCount(0);
+          setCurrentYearCount(0);
           setIsLoading(false);
         }
       } catch (error) {
@@ -182,12 +186,24 @@ function App() {
         setAuthors([]);
         setAllAvailableYears([]);
         setTotalCollectionCount(0);
+        setCurrentYearCount(0);
         setIsLoading(false);
       }
     };
 
     initializeApp();
   }, []);
+
+  // Load current year count from database
+  const loadCurrentYearCount = async () => {
+    try {
+      const count = await fetchCurrentYearCount();
+      setCurrentYearCount(count);
+    } catch (error) {
+      console.error('Failed to load current year count:', error);
+      setCurrentYearCount(0);
+    }
+  };
 
   // Load total collection count (all books, no filters)
   const loadTotalCollectionCount = async () => {
@@ -299,8 +315,9 @@ function App() {
       setEditingBook(null);
       console.log('Book updated successfully in Supabase');
       
-      // Refresh the book list to reflect changes in order/filtering
+      // Refresh the book list and counts to reflect changes
       loadBooksPage(0, true);
+      loadCurrentYearCount(); // In case completion year changed
     } catch (error) {
       console.error('Failed to update book:', error);
       alert('Failed to update book. Please check your Supabase connection and try again.');
@@ -314,18 +331,17 @@ function App() {
     }
 
     try {
-      // Remove from UI first (optimistic update)
-      setBooks(prev => prev.filter(book => book.id !== bookId));
-      setTotalCount(prev => prev - 1);
-      
       // Delete from database
       await deleteBook(bookId);
       
       console.log('Book deleted successfully');
+      
+      // Refresh book list and counts
+      loadBooksPage(0, true);
+      loadTotalCollectionCount();
+      loadCurrentYearCount();
     } catch (error) {
       console.error('Failed to delete book:', error);
-      // Restore by reloading current page
-      loadBooksPage(0, true);
       alert('Failed to delete book. Please try again.');
     }
   };
@@ -351,8 +367,10 @@ function App() {
       await addBook(newBook);
       console.log('Book saved successfully to Supabase');
       
-      // Reload from beginning to show new book
+      // Reload from beginning to show new book and update counts
       loadBooksPage(0, true);
+      loadTotalCollectionCount();
+      loadCurrentYearCount();
     } catch (error) {
       console.error('Failed to save book to Supabase:', error);
       alert('Failed to save book. Please check your Supabase connection and try again.');
@@ -519,15 +537,10 @@ function App() {
   };
 
   const getStats = () => {
-    // Use totalCount from pagination for accurate stats
-    const totalBooks = totalCount;
-    const currentYear = new Date().getFullYear();
-    
-    // For "this year" count, we need to make a separate filtered query
-    // For now, estimate based on current loaded books
-    const booksThisYear = books.filter(book => book.completionYear === currentYear).length;
-
-    return { totalBooks, booksThisYear };
+    return { 
+      totalBooks: totalCollectionCount, 
+      booksThisYear: currentYearCount 
+    };
   };
 
   const stats = getStats();
