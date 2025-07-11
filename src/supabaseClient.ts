@@ -609,6 +609,69 @@ export async function addGenre(name: string): Promise<Genre> {
   }
 }
 
+// Edit a genre name and update all books that use it
+export async function editGenre(id: string, oldName: string, newName: string): Promise<Genre> {
+  try {
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('Supabase not configured. Please add environment variables.');
+    }
+
+    console.log('Editing genre:', oldName, 'to', newName);
+    
+    // First update the genre name in the genres table
+    const { data: genreData, error: genreError } = await supabase
+      .from('genres')
+      .update({ name: newName })
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (genreError) {
+      console.error('Error updating genre:', genreError);
+      throw genreError;
+    }
+
+    // Then update all books that have this genre in their genres array
+    const { data: booksWithGenre, error: fetchError } = await supabase
+      .from('books')
+      .select('id, genres')
+      .contains('genres', [oldName]);
+
+    if (fetchError) {
+      console.error('Error fetching books with genre:', fetchError);
+      throw fetchError;
+    }
+
+    // Update each book's genres array
+    for (const book of booksWithGenre || []) {
+      const updatedGenres = book.genres.map((genre: string) => 
+        genre === oldName ? newName : genre
+      );
+      
+      const { error: updateError } = await supabase
+        .from('books')
+        .update({ genres: updatedGenres })
+        .eq('id', book.id);
+
+      if (updateError) {
+        console.error('Error updating book genres:', updateError);
+        // Continue with other books even if one fails
+      }
+    }
+    
+    console.log('Successfully updated genre and all associated books');
+    
+    return {
+      id: genreData.id,
+      name: genreData.name,
+      isCustom: genreData.is_custom
+    };
+  } catch (error) {
+    console.error('Failed to edit genre:', error);
+    throw error;
+  }
+}
+
 // Delete a genre from Supabase
 export async function deleteGenre(id: string): Promise<void> {
   try {
@@ -700,6 +763,51 @@ export async function addSeries(name: string): Promise<Series> {
   }
 }
 
+// Edit a series name and update all books that use it
+export async function editSeries(id: string, oldName: string, newName: string): Promise<Series> {
+  try {
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('Supabase not configured. Please add environment variables.');
+    }
+
+    console.log('Editing series:', oldName, 'to', newName);
+    
+    // First update the series name in the series table
+    const { data: seriesData, error: seriesError } = await supabase
+      .from('series')
+      .update({ name: newName })
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (seriesError) {
+      console.error('Error updating series:', seriesError);
+      throw seriesError;
+    }
+
+    // Then update all books that have this series name
+    const { error: updateBooksError } = await supabase
+      .from('books')
+      .update({ seriesname: newName })
+      .eq('seriesname', oldName);
+
+    if (updateBooksError) {
+      console.error('Error updating books with series:', updateBooksError);
+      throw updateBooksError;
+    }
+    
+    console.log('Successfully updated series and all associated books');
+    
+    return {
+      id: seriesData.id,
+      name: seriesData.name
+    };
+  } catch (error) {
+    console.error('Failed to edit series:', error);
+    throw error;
+  }
+}
+
 // Delete a series from Supabase
 export async function deleteSeries(id: string): Promise<void> {
   try {
@@ -787,6 +895,51 @@ export async function addAuthor(name: string): Promise<Author> {
     };
   } catch (error) {
     console.error('Failed to add author:', error);
+    throw error;
+  }
+}
+
+// Edit an author name and update all books that use it
+export async function editAuthor(id: string, oldName: string, newName: string): Promise<Author> {
+  try {
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('Supabase not configured. Please add environment variables.');
+    }
+
+    console.log('Editing author:', oldName, 'to', newName);
+    
+    // First update the author name in the authors table
+    const { data: authorData, error: authorError } = await supabase
+      .from('authors')
+      .update({ name: newName })
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (authorError) {
+      console.error('Error updating author:', authorError);
+      throw authorError;
+    }
+
+    // Then update all books that have this author name
+    const { error: updateBooksError } = await supabase
+      .from('books')
+      .update({ author: newName })
+      .eq('author', oldName);
+
+    if (updateBooksError) {
+      console.error('Error updating books with author:', updateBooksError);
+      throw updateBooksError;
+    }
+    
+    console.log('Successfully updated author and all associated books');
+    
+    return {
+      id: authorData.id,
+      name: authorData.name
+    };
+  } catch (error) {
+    console.error('Failed to edit author:', error);
     throw error;
   }
 }
