@@ -8,12 +8,15 @@ import {
   deleteBook,
   fetchGenres,
   addGenre,
+  editGenre,
   deleteGenre,
   fetchSeries,
   addSeries,
+  editSeries,
   deleteSeries,
   fetchAuthors,
   addAuthor,
+  editAuthor,
   deleteAuthor,
   type BookFilters 
 } from './supabaseClient';
@@ -452,6 +455,69 @@ function App() {
     }
   };
 
+  const handleEditGenre = async (genreId: string, oldName: string, newName: string) => {
+    if (!supabaseConnected) {
+      alert('Please connect Supabase first.');
+      return;
+    }
+
+    try {
+      const updatedGenre = await editGenre(genreId, oldName, newName);
+      setGenres(prev => prev.map(genre => 
+        genre.id === genreId ? updatedGenre : genre
+      ).sort((a, b) => a.name.localeCompare(b.name)));
+      
+      // Refresh book list to show updated genre names
+      loadBooksPage(0, true);
+      console.log('Genre edited successfully');
+    } catch (error) {
+      console.error('Failed to edit genre:', error);
+      alert('Failed to edit genre. Please try again.');
+    }
+  };
+
+  const handleEditSeries = async (seriesId: string, oldName: string, newName: string) => {
+    if (!supabaseConnected) {
+      alert('Please connect Supabase first.');
+      return;
+    }
+
+    try {
+      const updatedSeries = await editSeries(seriesId, oldName, newName);
+      setSeries(prev => prev.map(series => 
+        series.id === seriesId ? updatedSeries : series
+      ).sort((a, b) => a.name.localeCompare(b.name)));
+      
+      // Refresh book list to show updated series names
+      loadBooksPage(0, true);
+      console.log('Series edited successfully');
+    } catch (error) {
+      console.error('Failed to edit series:', error);
+      alert('Failed to edit series. Please try again.');
+    }
+  };
+
+  const handleEditAuthor = async (authorId: string, oldName: string, newName: string) => {
+    if (!supabaseConnected) {
+      alert('Please connect Supabase first.');
+      return;
+    }
+
+    try {
+      const updatedAuthor = await editAuthor(authorId, oldName, newName);
+      setAuthors(prev => prev.map(author => 
+        author.id === authorId ? updatedAuthor : author
+      ).sort((a, b) => a.name.localeCompare(b.name)));
+      
+      // Refresh book list to show updated author names
+      loadBooksPage(0, true);
+      console.log('Author edited successfully');
+    } catch (error) {
+      console.error('Failed to edit author:', error);
+      alert('Failed to edit author. Please try again.');
+    }
+  };
+
   const getStats = () => {
     // Use totalCount from pagination for accurate stats
     const totalBooks = totalCount;
@@ -634,6 +700,9 @@ function App() {
             onDeleteGenre={handleDeleteGenre}
             onDeleteSeries={handleDeleteSeries}
             onDeleteAuthor={handleDeleteAuthor}
+            onEditGenre={handleEditGenre}
+            onEditSeries={handleEditSeries}
+            onEditAuthor={handleEditAuthor}
           />
         )}
       </div>
