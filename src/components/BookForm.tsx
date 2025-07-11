@@ -39,8 +39,8 @@ const BookForm: React.FC<BookFormProps> = ({
   const [formData, setFormData] = useState({
     title: '',
     author: '',
-    completionMonth: new Date().getMonth() + 1,
-    completionYear: new Date().getFullYear(),
+    completionMonth: 0, // Changed to 0 for placeholder
+    completionYear: 0,  // Changed to 0 for placeholder
     genres: [] as string[],
     coverImage: '',
     isStandalone: true,
@@ -120,8 +120,8 @@ const BookForm: React.FC<BookFormProps> = ({
     e.preventDefault();
     
     // Validation - check required fields
-    if (!formData.title || !formData.author || formData.genres.length === 0 || !formData.whichWitch) {
-      alert('Please fill in all required fields: Title, Author, at least one Genre, and Which Witch selection.');
+    if (!formData.title || !formData.author || formData.genres.length === 0 || !formData.whichWitch || !formData.completionMonth || !formData.completionYear) {
+      alert('Please fill in all required fields: Title, Author, at least one Genre, Completion Date (Month and Year), and Which Witch selection.');
       return;
     }
 
@@ -468,9 +468,13 @@ const BookForm: React.FC<BookFormProps> = ({
 
           {/* Completion Date */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Completion Date</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Completion Date *
+              <span className="text-red-500 ml-1 font-normal text-xs">(Required)</span>
+            </label>
             <div className="grid grid-cols-2 gap-4">
               <select
+                required
                 value={formData.completionMonth}
                 onChange={(e) => setFormData(prev => ({ ...prev, completionMonth: parseInt(e.target.value) }))}
                 className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
@@ -481,12 +485,14 @@ const BookForm: React.FC<BookFormProps> = ({
                 onFocus={(e) => e.target.style.borderColor = '#d681a3'}
                 onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
               >
+                <option value={0}>Select Month</option>
                 {months.map((month, index) => (
                   <option key={index} value={index + 1}>{month}</option>
                 ))}
               </select>
 
               <select
+                required
                 value={formData.completionYear}
                 onChange={(e) => setFormData(prev => ({ ...prev, completionYear: parseInt(e.target.value) }))}
                 className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
@@ -497,6 +503,7 @@ const BookForm: React.FC<BookFormProps> = ({
                 onFocus={(e) => e.target.style.borderColor = '#d681a3'}
                 onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
               >
+                <option value={0}>Select Year</option>
                 {years.map(year => (
                   <option key={year} value={year}>{year}</option>
                 ))}
