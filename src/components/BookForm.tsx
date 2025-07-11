@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Upload, Plus, X, Trash2 } from 'lucide-react';
+import { Upload, Plus, X, Trash2, Edit } from 'lucide-react';
 import { Book, Genre, Series, Author } from '../types/Book';
 import { calculateOverallRating, convertToStarRating } from '../utils/storage';
 import RatingInput from './RatingInput';
