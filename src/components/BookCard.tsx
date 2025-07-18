@@ -21,7 +21,7 @@ const BookCard: React.FC<BookCardProps> = ({ book, onEdit }) => {
       case '✨ Affo':
       case 'Affo': // Keep backwards compatibility
         return { backgroundColor: '#98e1eb', color: '#39929e' };
-      case '🧙‍♀️ Lou Lou':
+      case 'Lou Lou 🍁':
       case 'Lou Lou': // Keep backwards compatibility
         return { backgroundColor: '#f5af69', color: '#b86009' };
       case '🪄 Chlo':
