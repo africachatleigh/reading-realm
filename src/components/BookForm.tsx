@@ -82,7 +82,7 @@ const BookForm: React.FC<BookFormProps> = ({
   const [editingGenreName, setEditingGenreName] = useState('');
 
   // Which Witch options
-  const whichWitchOptions = ['Lou Lou 🍁', '🪄 Chlo', '✨ Affo'];
+  const whichWitchOptions = ['Lou Lou 🍁', '🪄 Chlo', 'Affo ⚔️'];
 
   // Sort authors and series alphabetically
   const sortedAuthors = [...authors].sort((a, b) => a.name.localeCompare(b.name));
