@@ -5,6 +5,7 @@ import {
   fetchBooksWithPagination, 
   fetchAllYears,
   fetchCurrentYearCount,
+  fetchFilteredCounts,
   testConnection, 
   deleteBook,
   fetchGenres,
@@ -49,6 +50,7 @@ function App() {
   const [totalCount, setTotalCount] = useState(0);
   const [totalCollectionCount, setTotalCollectionCount] = useState(0);
   const [currentYearCount, setCurrentYearCount] = useState(0);
+  const [filteredStats, setFilteredStats] = useState({ totalCount: 0, currentYearCount: 0 });
   const [filtersChanged, setFiltersChanged] = useState(false);
   
   // Shared filter state
@@ -115,11 +117,27 @@ function App() {
       setHasMore(result.hasMore);
       setTotalCount(result.totalCount);
       setFiltersChanged(false);
+      
+      // Update filtered stats whenever we load books
+      updateFilteredStats();
     } catch (error) {
       console.error('Failed to load books:', error);
     } finally {
       setIsLoading(false);
       setIsLoadingMore(false);
+    }
+  }, [supabaseConnected, filters]);
+
+  // Update filtered stats based on current filters
+  const updateFilteredStats = useCallback(async () => {
+    if (!supabaseConnected) return;
+    
+    try {
+      const stats = await fetchFilteredCounts(filters);
+      setFilteredStats(stats);
+    } catch (error) {
+      console.error('Failed to update filtered stats:', error);
+      setFilteredStats({ totalCount: 0, currentYearCount: 0 });
     }
   }, [supabaseConnected, filters]);
 
@@ -175,6 +193,7 @@ function App() {
           setAllAvailableYears([]);
           setTotalCollectionCount(0);
           setCurrentYearCount(0);
+          setFilteredStats({ totalCount: 0, currentYearCount: 0 });
           setIsLoading(false);
         }
       } catch (error) {
@@ -187,6 +206,7 @@ function App() {
         setAllAvailableYears([]);
         setTotalCollectionCount(0);
         setCurrentYearCount(0);
+        setFilteredStats({ totalCount: 0, currentYearCount: 0 });
         setIsLoading(false);
       }
     };
@@ -537,10 +557,22 @@ function App() {
   };
 
   const getStats = () => {
-    return { 
-      totalBooks: totalCollectionCount, 
-      booksThisYear: currentYearCount 
-    };
+    // Check if any filters are applied
+    const hasFilters = !!(filters.searchTerm || filters.genreFilter || filters.yearFilter || filters.whichWitchFilter);
+    
+    if (hasFilters) {
+      // Use filtered stats when filters are applied
+      return { 
+        totalBooks: filteredStats.totalCount, 
+        booksThisYear: filteredStats.currentYearCount 
+      };
+    } else {
+      // Use unfiltered stats when no filters are applied
+      return { 
+        totalBooks: totalCollectionCount, 
+        booksThisYear: currentYearCount 
+      };
+    }
   };
 
   const stats = getStats();
