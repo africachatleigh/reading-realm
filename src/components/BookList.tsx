@@ -90,7 +90,7 @@ const BookList: React.FC<BookListProps> = ({
     };
   }, [onLoadMore, hasMore, isLoading]);
 
-  const whichWitchOptions = ['🧙‍♀️ Lou Lou', '🪄 Chlo', '✨ Affo'];
+  const whichWitchOptions = ['Lou Lou 🍁', '🪄 Chlo', '✨ Affo'];
 
   // Helper function to get witch colors
   const getWitchColors = (witch: string) => {
