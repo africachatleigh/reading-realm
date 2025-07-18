@@ -18,14 +18,11 @@ const BookCard: React.FC<BookCardProps> = ({ book, onEdit }) => {
   // Helper function to get witch colors
   const getWitchColors = (witch: string) => {
     switch (witch) {
-      case 'Affo ⚔️':
-      case 'Affo': // Keep backwards compatibility
+      case 'Affo':
         return { backgroundColor: '#98e1eb', color: '#39929e' };
-      case 'Lou Lou 🍁':
-      case 'Lou Lou': // Keep backwards compatibility
+      case 'Lou Lou':
         return { backgroundColor: '#f5af69', color: '#b86009' };
-      case 'Chlo 🌻':
-      case 'Chlo': // Keep backwards compatibility
+      case 'Chlo':
         return { backgroundColor: '#abd9a3', color: '#507a48' };
       default:
         return { backgroundColor: '#d681a3', color: 'white' };
