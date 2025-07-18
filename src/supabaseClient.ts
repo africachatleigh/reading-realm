@@ -327,6 +327,86 @@ export async function fetchCurrentYearCount(): Promise<number> {
     throw error;
   }
 }
+
+// Get filtered counts for stats (total and current year)
+export async function fetchFilteredCounts(filters: BookFilters): Promise<{ totalCount: number; currentYearCount: number }> {
+  try {
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.warn('Supabase not configured, returning zeros');
+      return { totalCount: 0, currentYearCount: 0 };
+    }
+
+    // Build base query with filters
+    let baseQuery = supabase.from('books').select('*', { count: 'exact', head: true });
+    
+    // Apply filters
+    if (filters.searchTerm) {
+      const searchTerm = filters.searchTerm.toLowerCase();
+      baseQuery = baseQuery.or(`title.ilike.%${searchTerm}%,author.ilike.%${searchTerm}%,seriesname.ilike.%${searchTerm}%`);
+    }
+
+    if (filters.genreFilter) {
+      baseQuery = baseQuery.contains('genres', [filters.genreFilter]);
+    }
+
+    if (filters.yearFilter) {
+      baseQuery = baseQuery.eq('completionyear', parseInt(filters.yearFilter));
+    }
+
+    if (filters.whichWitchFilter) {
+      baseQuery = baseQuery.eq('whichwitch', filters.whichWitchFilter);
+    }
+
+    // Get total count with filters
+    const { count: totalCount, error: totalError } = await baseQuery;
+    
+    if (totalError) {
+      console.error('Error fetching filtered total count:', totalError);
+      throw totalError;
+    }
+
+    // Get current year count with filters
+    const currentYear = new Date().getFullYear();
+    let currentYearQuery = supabase.from('books').select('*', { count: 'exact', head: true })
+      .eq('completionyear', currentYear);
+    
+    // Apply same filters to current year query
+    if (filters.searchTerm) {
+      const searchTerm = filters.searchTerm.toLowerCase();
+      currentYearQuery = currentYearQuery.or(`title.ilike.%${searchTerm}%,author.ilike.%${searchTerm}%,seriesname.ilike.%${searchTerm}%`);
+    }
+
+    if (filters.genreFilter) {
+      currentYearQuery = currentYearQuery.contains('genres', [filters.genreFilter]);
+    }
+
+    if (filters.whichWitchFilter) {
+      currentYearQuery = currentYearQuery.eq('whichwitch', filters.whichWitchFilter);
+    }
+
+    // Don't apply year filter to current year query since we're already filtering by current year
+    
+    const { count: currentYearCount, error: currentYearError } = await currentYearQuery;
+    
+    if (currentYearError) {
+      console.error('Error fetching filtered current year count:', currentYearError);
+      throw currentYearError;
+    }
+
+    console.log('Successfully fetched filtered counts:', {
+      totalCount: totalCount || 0,
+      currentYearCount: currentYearCount || 0
+    });
+
+    return {
+      totalCount: totalCount || 0,
+      currentYearCount: currentYearCount || 0
+    };
+  } catch (error) {
+    console.error('Failed to fetch filtered counts:', error);
+    throw error;
+  }
+}
 export async function fetchBooks(): Promise<Book[]> {
   try {
     if (!supabaseUrl || !supabaseAnonKey) {
