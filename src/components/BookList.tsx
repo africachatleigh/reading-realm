@@ -101,7 +101,7 @@ const BookList: React.FC<BookListProps> = ({
       case 'Lou Lou 🍁':
       case 'Lou Lou': // Keep backwards compatibility
         return { backgroundColor: '#f5af69', color: '#b86009' };
-      case '🪄 Chlo':
+      case 'Chlo 🌻':
       case 'Chlo': // Keep backwards compatibility
         return { backgroundColor: '#abd9a3', color: '#507a48' };
       default:
